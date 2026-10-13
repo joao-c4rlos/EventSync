@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { autenticadoGuard, visitanteGuard } from './core/auth.guards';
 
 export const routes: Routes = [
+  { path: '', pathMatch: 'full', redirectTo: 'eventos' },
   {
     path: '',
     canActivate: [visitanteGuard],
@@ -23,8 +24,7 @@ export const routes: Routes = [
       { path: 'financeiro', title: 'Financeiro | EventSync', loadComponent: () => import('./features/em-breve').then((m) => m.EmBreve), data: { titulo: 'Gestão financeira' } },
       { path: 'configuracoes', title: 'Configurações | EventSync', loadComponent: () => import('./features/configuracoes/configuracoes').then((m) => m.Configuracoes) },
       { path: 'perfil', title: 'Perfil | EventSync', loadComponent: () => import('./features/perfil/perfil').then((m) => m.Perfil) },
-      { path: '', pathMatch: 'full', redirectTo: 'eventos' },
     ],
   },
-  { path: '**', redirectTo: '' },
+  { path: '**', redirectTo: 'eventos' },
 ];
