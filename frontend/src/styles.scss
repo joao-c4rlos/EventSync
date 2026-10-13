@@ -1,1 +1,177 @@
-/* You can add global styles to this file, and also import other style files */
+:root {
+  --cor-sidebar: #211b3d;
+  --cor-sidebar-texto: #a99fd6;
+  --cor-roxo: #6a35b8;
+  --cor-roxo-claro: #e4dafa;
+  --cor-ciano: #4fc8e8;
+  --cor-verde: #2aa99a;
+  --cor-verde-escuro: #238f83;
+  --cor-cinza: #777b85;
+  --cor-fundo: #e8e9f3;
+  --cor-card: #ffffff;
+  --cor-borda: #cfd2de;
+  --cor-texto: #16151c;
+  --cor-texto-suave: #6b6e7a;
+  --cor-erro: #d93848;
+  --cor-sucesso: #2e9e5b;
+  --raio: 8px;
+  --sombra: 0 2px 8px rgba(33, 27, 61, 0.08);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+}
+
+body {
+  font-family: 'Roboto', system-ui, sans-serif;
+  color: var(--cor-texto);
+  background: var(--cor-fundo);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1 {
+  font-size: 2rem;
+  margin: 0 0 1.5rem;
+}
+
+a {
+  color: var(--cor-roxo);
+}
+
+.icone {
+  font-family: 'Material Symbols Outlined';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 22px;
+  line-height: 1;
+  display: inline-block;
+  white-space: nowrap;
+  direction: ltr;
+  -webkit-font-feature-settings: 'liga';
+  font-feature-settings: 'liga';
+}
+
+.card {
+  background: var(--cor-card);
+  border-radius: var(--raio);
+  box-shadow: var(--sombra);
+  padding: 1.5rem;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-width: 140px;
+  padding: 0.7rem 1.4rem;
+  border: none;
+  border-radius: 4px;
+  font: inherit;
+  font-weight: 500;
+  color: #fff;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.15s, opacity 0.15s;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.btn-primario {
+  background: var(--cor-verde);
+
+  &:hover:not(:disabled) {
+    background: var(--cor-verde-escuro);
+  }
+}
+
+.btn-secundario {
+  background: var(--cor-cinza);
+
+  &:hover:not(:disabled) {
+    background: #62656e;
+  }
+}
+
+.btn-roxo {
+  background: var(--cor-roxo);
+  border-radius: var(--raio);
+
+  &:hover:not(:disabled) {
+    background: #5a2c9e;
+  }
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-bottom: 1rem;
+
+  label {
+    font-weight: 500;
+    font-size: 0.9rem;
+  }
+}
+
+.input {
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--cor-borda);
+  border-radius: 4px;
+  background: #fff;
+  font: inherit;
+  color: inherit;
+  transition: border-color 0.15s, box-shadow 0.15s;
+
+  &:focus {
+    outline: none;
+    border-color: var(--cor-roxo);
+    box-shadow: 0 0 0 3px rgba(106, 53, 184, 0.15);
+  }
+
+  &.invalido {
+    border-color: var(--cor-erro);
+  }
+}
+
+.erro-campo {
+  color: var(--cor-erro);
+  font-size: 0.8rem;
+}
+
+.alerta {
+  padding: 0.75rem 1rem;
+  border-radius: var(--raio);
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+
+  &.erro {
+    background: #fde8ea;
+    color: #a3202e;
+  }
+
+  &.sucesso {
+    background: #e3f5ea;
+    color: #1e6e3f;
+  }
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}

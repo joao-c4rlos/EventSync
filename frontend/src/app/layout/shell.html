@@ -1,0 +1,62 @@
+<div class="shell" [class.sidebar-aberta]="sidebarAberta()">
+  <aside class="sidebar">
+    <a routerLink="/eventos" class="marca">Event <span>Sync</span></a>
+    <nav aria-label="Menu principal">
+      @for (item of itens; track item.rota) {
+        <a [routerLink]="item.rota" routerLinkActive="ativo" class="item-menu">
+          <span class="icone" aria-hidden="true">{{ item.icone }}</span>
+          {{ item.rotulo }}
+        </a>
+      }
+    </nav>
+  </aside>
+
+  @if (sidebarAberta()) {
+    <div class="sobreposicao" (click)="sidebarAberta.set(false)"></div>
+  }
+
+  <div class="principal">
+    <header class="topo">
+      <button type="button" class="botao-icone menu-mobile" aria-label="Abrir menu" (click)="sidebarAberta.set(true)">
+        <span class="icone">menu</span>
+      </button>
+
+      <label class="busca">
+        <span class="icone" aria-hidden="true">search</span>
+        <span class="sr-only">Buscar evento</span>
+        <input type="search" placeholder="Busque um evento" />
+      </label>
+
+      <div class="acoes">
+        <button type="button" class="botao-icone notificacoes" aria-label="Notificações">
+          <span class="icone">notifications</span>
+        </button>
+
+        <div class="usuario">
+          <button
+            type="button"
+            class="botao-usuario"
+            [attr.aria-expanded]="menuUsuarioAberto()"
+            (click)="menuUsuarioAberto.set(!menuUsuarioAberto())"
+          >
+            <app-avatar [nome]="usuario()?.nome ?? ''" [tamanho]="36" />
+            <span class="nome">{{ primeiroNome() }}</span>
+            <span class="icone" aria-hidden="true">expand_more</span>
+          </button>
+
+          @if (menuUsuarioAberto()) {
+            <div class="menu-usuario" role="menu">
+              <a routerLink="/perfil" role="menuitem"><span class="icone">person</span> Meu perfil</a>
+              <a routerLink="/configuracoes" role="menuitem"><span class="icone">settings</span> Configurações</a>
+              <button type="button" role="menuitem" (click)="sair()"><span class="icone">logout</span> Sair</button>
+            </div>
+          }
+        </div>
+      </div>
+    </header>
+
+    <main class="conteudo">
+      <router-outlet />
+    </main>
+  </div>
+</div>

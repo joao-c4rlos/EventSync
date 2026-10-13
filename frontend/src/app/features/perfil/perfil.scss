@@ -1,0 +1,96 @@
+.perfil {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 520px);
+  gap: 3rem;
+  align-items: start;
+}
+
+.foto {
+  position: relative;
+  justify-self: center;
+  padding-right: 3rem;
+  border-right: 1px solid var(--cor-borda);
+  min-height: 380px;
+}
+
+.editar-foto {
+  position: absolute;
+  right: 3rem;
+  top: 105px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: none;
+  background: #fff;
+  box-shadow: var(--sombra);
+  color: var(--cor-roxo);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+
+  .icone {
+    font-size: 18px;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+}
+
+form {
+  padding: 2rem 3rem;
+}
+
+.linha {
+  display: grid;
+  grid-template-columns: 100px 1fr;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.9rem;
+
+  label {
+    font-weight: 700;
+    font-size: 0.85rem;
+  }
+
+  .input {
+    padding: 0.4rem 0.6rem;
+  }
+}
+
+.btn {
+  margin-top: 0.75rem;
+  margin-left: 112px;
+}
+
+@media (max-width: 860px) {
+  .perfil {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .foto {
+    border-right: none;
+    padding-right: 0;
+    min-height: 0;
+  }
+
+  .editar-foto {
+    right: 0;
+  }
+
+  form {
+    padding: 1.5rem;
+  }
+
+  .linha {
+    grid-template-columns: 1fr;
+    gap: 0.3rem;
+  }
+
+  .btn {
+    margin-left: 0;
+    width: 100%;
+  }
+}
