@@ -21,11 +21,11 @@
         <span class="icone">menu</span>
       </button>
 
-      <label class="busca">
+      <form class="busca" role="search" (submit)="buscar($event, termo.value)">
         <span class="icone" aria-hidden="true">search</span>
-        <span class="sr-only">Buscar evento</span>
-        <input type="search" placeholder="Busque um evento" />
-      </label>
+        <label for="busca-global" class="sr-only">Buscar evento</label>
+        <input #termo id="busca-global" type="search" placeholder="Busque um evento" />
+      </form>
 
       <div class="acoes">
         <button type="button" class="botao-icone notificacoes" aria-label="Notificações">

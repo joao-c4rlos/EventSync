@@ -1,0 +1,107 @@
+@if (evento(); as e) {
+  <a routerLink="/eventos" class="voltar"><span class="icone">arrow_back</span> Eventos</a>
+
+  <div class="cabecalho-pagina">
+    <div>
+      <span class="tipo"><span class="icone">{{ tipo(e.tipo).icone }}</span> {{ tipo(e.tipo).rotulo }}</span>
+      <h1>{{ e.titulo }} <span class="badge" [class]="e.status.toLowerCase()">{{ rotuloStatus[e.status] }}</span></h1>
+    </div>
+    <div class="acoes">
+      @for (a of acoes(); track a.status) {
+        <button type="button" class="btn" [class.btn-primario]="a.status === 'PUBLICADO'" [class.btn-secundario]="a.status !== 'PUBLICADO'"
+          (click)="alterarStatus(a.status)">
+          <span class="icone">{{ a.icone }}</span> {{ a.rotulo }}
+        </button>
+      }
+      <a [routerLink]="['/eventos', e.id, 'editar']" class="botao-texto" title="Editar"><span class="icone">edit</span></a>
+      <button type="button" class="botao-texto perigo" title="Excluir" (click)="excluir()"><span class="icone">delete</span></button>
+    </div>
+  </div>
+
+  @if (erro()) {
+    <div class="alerta erro" role="alert">{{ erro() }}</div>
+  }
+
+  @if (e.status === 'PUBLICADO') {
+    <div class="card link-publico">
+      <span class="icone">link</span>
+      <div>
+        <strong>Página pública de inscrição</strong>
+        <a [href]="linkPublico()" target="_blank" rel="noopener">{{ linkPublico() }}</a>
+      </div>
+      <button type="button" class="btn btn-roxo" (click)="copiarLink()">{{ copiado() ? 'Copiado!' : 'Copiar link' }}</button>
+    </div>
+  } @else if (e.status === 'RASCUNHO') {
+    <div class="alerta info">Este evento é um rascunho. Publique-o para liberar a página pública de inscrição.</div>
+  }
+
+  <div class="infos">
+    <div class="card info">
+      <span class="icone">calendar_today</span>
+      <div>
+        <small>Data</small>
+        <strong>{{ e.dataInicio | date: 'dd/MM/yyyy' }}{{ e.dataFim && e.dataFim !== e.dataInicio ? ' a ' + (e.dataFim | date: 'dd/MM/yyyy') : '' }}</strong>
+        <span>{{ hora(e.horaInicio) }}{{ e.horaFim ? ' - ' + hora(e.horaFim) : '' }}</span>
+      </div>
+    </div>
+    <div class="card info">
+      <span class="icone">location_on</span>
+      <div><small>Local</small><strong>{{ e.local }}</strong></div>
+    </div>
+    <div class="card info">
+      <span class="icone">group</span>
+      <div>
+        <small>Inscritos</small>
+        <strong>{{ e.inscritos }} / {{ e.capacidade }}</strong>
+        <span>{{ e.capacidade - e.inscritos }} vagas restantes</span>
+      </div>
+    </div>
+    <div class="card info">
+      <span class="icone">payments</span>
+      <div>
+        <small>Lucro previsto</small>
+        <strong [class.negativo]="e.lucroPrevisto < 0">{{ e.lucroPrevisto | currency: 'BRL' }}</strong>
+        <span>Receita {{ e.receitaPrevista | currency: 'BRL' }} · Gasto {{ e.gastoPrevisto | currency: 'BRL' }}</span>
+      </div>
+    </div>
+  </div>
+
+  @if (e.descricao) {
+    <section class="card descricao">
+      <h2>Descrição</h2>
+      <p>{{ e.descricao }}</p>
+    </section>
+  }
+
+  <section class="card">
+    <h2>Inscrições ({{ inscricoes().length }})</h2>
+    @if (inscricoes().length === 0) {
+      <p class="carregando">Nenhuma inscrição ainda.</p>
+    } @else {
+      <div class="rolagem">
+        <table class="tabela">
+          <thead>
+            <tr><th>Nome</th><th>E-mail</th><th>Telefone</th><th>Inscrito em</th><th></th></tr>
+          </thead>
+          <tbody>
+            @for (i of inscricoes(); track i.id) {
+              <tr>
+                <td>{{ i.nome }}</td>
+                <td>{{ i.email }}</td>
+                <td>{{ i.telefone || '—' }}</td>
+                <td>{{ i.criadoEm | date: 'dd/MM/yyyy HH:mm' }}</td>
+                <td>
+                  <button type="button" class="botao-texto perigo" title="Remover inscrição" (click)="removerInscricao(i)">
+                    <span class="icone">person_remove</span>
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </section>
+} @else {
+  <p class="carregando">Carregando evento...</p>
+}

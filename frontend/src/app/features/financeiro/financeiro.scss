@@ -1,0 +1,161 @@
+.controles {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.seletor-mes {
+  position: relative;
+  background: #fff;
+  border: 1px solid var(--cor-borda);
+  border-radius: 4px;
+  padding: 0.55rem 1rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+
+  input {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.indicador {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  border: 1px solid var(--cor-borda);
+  box-shadow: none;
+  padding: 1rem 1.25rem;
+
+  h2 {
+    text-align: center;
+    font-size: 1rem;
+    margin: 0;
+  }
+
+  strong {
+    text-align: center;
+    font-size: 1.05rem;
+    color: var(--cor-texto-suave);
+
+    &.negativo {
+      color: var(--cor-erro);
+    }
+  }
+}
+
+.barra-prevista {
+  font-size: 0.8rem;
+  margin-top: 0.4rem;
+
+  span {
+    display: flex;
+    justify-content: space-between;
+  }
+}
+
+.trilho {
+  height: 8px;
+  background: #e2e3e8;
+  margin-top: 0.25rem;
+
+  div {
+    height: 100%;
+    transition: width 0.3s;
+  }
+
+  .laranja {
+    background: #d9a23c;
+  }
+
+  .verde {
+    background: #8bd65c;
+  }
+}
+
+.totais {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  justify-content: center;
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+
+  i {
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+  }
+
+  b {
+    margin-left: auto;
+    padding-left: 0.5rem;
+  }
+}
+
+.tabela-card {
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--cor-borda);
+  box-shadow: none;
+}
+
+.rolagem {
+  overflow-x: auto;
+}
+
+.tabela {
+  .suave {
+    color: var(--cor-texto-suave);
+  }
+
+  .saida {
+    color: var(--cor-erro);
+  }
+
+  .badge {
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+  }
+
+  .acoes {
+    white-space: nowrap;
+    text-align: right;
+  }
+}
+
+@media (max-width: 1100px) {
+  .cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .cards {
+    grid-template-columns: 1fr;
+  }
+}

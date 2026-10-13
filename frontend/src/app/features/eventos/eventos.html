@@ -1,0 +1,51 @@
+@if (carregando() && eventos().length === 0) {
+  <p class="carregando">Carregando eventos...</p>
+} @else if (semNenhumEvento()) {
+  <section class="vazio">
+    <h1>Gerencie eventos de forma inteligente.</h1>
+    <p>Transforme sua visão em experiências memoráveis com a plataforma de gestão de eventos mais completa.</p>
+    <a routerLink="/eventos/novo" class="btn btn-primario">Criar meu primeiro evento</a>
+  </section>
+} @else {
+  <div class="cabecalho-pagina">
+    <h1>Eventos</h1>
+    <a routerLink="/eventos/novo" class="btn btn-primario"><span class="icone">add</span> Novo evento</a>
+  </div>
+
+  <div class="filtros">
+    <select class="input" [value]="status()" (change)="filtrarStatus($any($event.target).value)" aria-label="Filtrar por status">
+      <option value="">Todos os status</option>
+      @for (s of statusOpcoes; track s[0]) {
+        <option [value]="s[0]">{{ s[1] }}</option>
+      }
+    </select>
+    @if (busca()) {
+      <span class="chip">
+        Busca: "{{ busca() }}"
+        <button type="button" (click)="limparBusca()" aria-label="Limpar busca"><span class="icone">close</span></button>
+      </span>
+    }
+  </div>
+
+  @if (eventos().length === 0) {
+    <p class="carregando">Nenhum evento encontrado com esses filtros.</p>
+  }
+
+  <div class="grade">
+    @for (e of eventos(); track e.id) {
+      <a class="card evento" [routerLink]="['/eventos', e.id]">
+        <div class="topo">
+          <span class="tipo"><span class="icone">{{ tipo(e.tipo).icone }}</span> {{ tipo(e.tipo).rotulo }}</span>
+          <span class="badge" [class]="e.status.toLowerCase()">{{ rotuloStatus[e.status] }}</span>
+        </div>
+        <h2>{{ e.titulo }}</h2>
+        <p><span class="icone">calendar_today</span> {{ e.dataInicio | date: 'dd/MM/yyyy' }} · {{ hora(e.horaInicio) }}{{ e.horaFim ? ' - ' + hora(e.horaFim) : '' }}</p>
+        <p><span class="icone">location_on</span> {{ e.local }}</p>
+        <div class="ocupacao">
+          <span>{{ e.inscritos }} / {{ e.capacidade }} inscritos</span>
+          <div class="barra"><div [style.width.%]="(e.inscritos / e.capacidade) * 100"></div></div>
+        </div>
+      </a>
+    }
+  </div>
+}

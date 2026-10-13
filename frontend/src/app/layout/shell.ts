@@ -18,6 +18,7 @@ interface ItemMenu {
 })
 export class Shell {
   private readonly auth = inject(AuthService);
+  private readonly router = inject(Router);
 
   protected readonly usuario = this.auth.usuario;
   protected readonly primeiroNome = computed(() => this.usuario()?.nome.split(' ').slice(0, 2).join(' ') ?? '');
@@ -32,8 +33,8 @@ export class Shell {
   ];
 
   constructor() {
-    inject(Router)
-      .events.pipe(filter((e) => e instanceof NavigationEnd))
+    this.router.events
+      .pipe(filter((e) => e instanceof NavigationEnd))
       .subscribe(() => {
         this.sidebarAberta.set(false);
         this.menuUsuarioAberto.set(false);
@@ -44,6 +45,11 @@ export class Shell {
   protected fecharMenus(): void {
     this.menuUsuarioAberto.set(false);
     this.sidebarAberta.set(false);
+  }
+
+  protected buscar(evento: Event, termo: string): void {
+    evento.preventDefault();
+    this.router.navigate(['/eventos'], { queryParams: { busca: termo.trim() || null } });
   }
 
   protected sair(): void {

@@ -1,0 +1,84 @@
+<h1>{{ editando() ? 'Editar evento' : 'Novo evento' }}</h1>
+
+@if (carregando()) {
+  <p class="carregando">Carregando evento...</p>
+} @else {
+  <form [formGroup]="form" (ngSubmit)="salvar()" novalidate>
+    @if (erro()) {
+      <div class="alerta erro" role="alert">{{ erro() }}</div>
+    }
+
+    <div class="layout">
+      <div class="campos">
+        <div class="campo">
+          <label for="titulo">Título do evento (do que se trata o evento?)</label>
+          <input id="titulo" class="input" formControlName="titulo" [class.invalido]="invalido('titulo')" />
+        </div>
+
+        <fieldset class="linha tipo" [class.invalido]="invalido('tipo')">
+          <legend>Tipo do evento</legend>
+          <div class="lista-tipos" role="radiogroup">
+            @for (t of tipos; track t.valor) {
+              <label class="opcao-tipo" [class.selecionado]="form.controls.tipo.value === t.valor">
+                <input type="radio" formControlName="tipo" [value]="t.valor" class="sr-only" />
+                <span class="icone">{{ t.icone }}</span> {{ t.rotulo }}
+              </label>
+            }
+          </div>
+        </fieldset>
+
+        <div class="linha dupla">
+          <label for="dataInicio">Data evento</label>
+          <input id="dataInicio" type="date" class="input" formControlName="dataInicio" [class.invalido]="invalido('dataInicio')" />
+          <label for="dataFim">Data término (opcional)</label>
+          <input id="dataFim" type="date" class="input" formControlName="dataFim" [min]="form.controls.dataInicio.value" />
+        </div>
+
+        <div class="linha dupla">
+          <label for="horaInicio">Horário de início</label>
+          <input id="horaInicio" type="time" class="input" formControlName="horaInicio" [class.invalido]="invalido('horaInicio')" />
+          <label for="horaFim">Horário de término (opcional)</label>
+          <input id="horaFim" type="time" class="input" formControlName="horaFim" />
+        </div>
+
+        <div class="linha">
+          <label for="local">Local</label>
+          <input id="local" class="input" formControlName="local" placeholder="Ex.: Arena Turbo, São Paulo" [class.invalido]="invalido('local')" />
+        </div>
+
+        <div class="linha">
+          <label for="capacidade">Quantidade estimada de pessoas</label>
+          <input id="capacidade" type="number" min="1" class="input curto" formControlName="capacidade" [class.invalido]="invalido('capacidade')" />
+        </div>
+
+        <div class="campo">
+          <label for="descricao">Descrição do evento</label>
+          <textarea id="descricao" class="input" rows="6" formControlName="descricao"></textarea>
+        </div>
+      </div>
+
+      <aside class="card resumo">
+        <h2>Resumo financeiro</h2>
+        <div class="linha-resumo">
+          <label for="gasto">Valor gasto (previsto)</label>
+          <input id="gasto" type="number" min="0" step="0.01" class="input" formControlName="gastoPrevisto" placeholder="R$ 0,00" />
+        </div>
+        <div class="linha-resumo">
+          <label for="receita">Receita prevista</label>
+          <input id="receita" type="number" min="0" step="0.01" class="input" formControlName="receitaPrevista" placeholder="R$ 0,00" />
+        </div>
+        <div class="linha-resumo">
+          <span class="rotulo">Lucro previsto</span>
+          <strong [class.negativo]="lucroPrevisto() < 0">{{ lucroPrevisto() | currency: 'BRL' }}</strong>
+        </div>
+      </aside>
+    </div>
+
+    <div class="acoes">
+      <button type="submit" class="btn btn-primario" [disabled]="salvando()">
+        {{ salvando() ? 'Salvando...' : editando() ? 'Salvar alterações' : 'Salvar novo evento' }}
+      </button>
+      <button type="button" class="btn btn-secundario" (click)="cancelar()">Cancelar</button>
+    </div>
+  </form>
+}

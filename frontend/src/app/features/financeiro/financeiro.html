@@ -1,0 +1,99 @@
+<div class="cabecalho-pagina">
+  <h1>Gestão financeira - Por mês</h1>
+  <div class="controles">
+    <label class="seletor-mes">
+      <span>Mês: {{ nomeMes() }}</span>
+      <input type="month" [value]="mes()" (change)="trocarMes($any($event.target).value)" aria-label="Selecionar mês" />
+    </label>
+    <button type="button" class="btn btn-primario" (click)="novo()"><span class="icone">add</span> Novo lançamento</button>
+  </div>
+</div>
+
+@if (resumo(); as r) {
+  <div class="cards">
+    <div class="card indicador">
+      <h2>Valor gasto</h2>
+      <strong>{{ r.gastoRealizado | currency: 'BRL' }}</strong>
+      <app-sparkline [valores]="series().gasto" [cor]="vermelho" rotulo="Evolução dos gastos no mês" />
+    </div>
+
+    <div class="card indicador">
+      <h2>Valores previstos</h2>
+      <div class="barra-prevista">
+        <span>Final do mês <b>{{ barrasPrevistas().fim | currency: 'BRL' }}</b></span>
+        <div class="trilho"><div class="laranja" [style.width.%]="barrasPrevistas().fimPct"></div></div>
+      </div>
+      <div class="barra-prevista">
+        <span>Mês que vem <b>{{ barrasPrevistas().proximo | currency: 'BRL' }}</b></span>
+        <div class="trilho"><div class="verde" [style.width.%]="barrasPrevistas().proximoPct"></div></div>
+      </div>
+    </div>
+
+    <div class="card indicador">
+      <h2>Valores recebidos</h2>
+      <strong>{{ r.recebido | currency: 'BRL' }}</strong>
+      <app-sparkline [valores]="series().recebido" [cor]="verde" rotulo="Evolução dos recebimentos no mês" />
+    </div>
+
+    <div class="card indicador">
+      <h2>Lucros previstos</h2>
+      <strong [class.negativo]="r.lucroPrevisto < 0">{{ r.lucroPrevisto | currency: 'BRL' }}</strong>
+      <app-sparkline [valores]="series().lucroPrevisto" [cor]="corDoLucro(series().lucroPrevisto)" rotulo="Lucro previsto acumulado" />
+    </div>
+
+    <div class="card indicador">
+      <h2>Lucros reais</h2>
+      <strong [class.negativo]="r.lucroReal < 0">{{ r.lucroReal | currency: 'BRL' }}</strong>
+      <app-sparkline [valores]="series().lucroReal" [cor]="corDoLucro(series().lucroReal)" rotulo="Lucro real acumulado" />
+    </div>
+
+    <div class="card indicador">
+      <h2>Valores totais</h2>
+      <div class="totais">
+        <app-donut [fatias]="fatias()" />
+        <ul>
+          @for (f of fatias(); track f.rotulo) {
+            <li><i [style.background]="f.cor"></i> {{ f.rotulo }} <b>{{ f.valor | currency: 'BRL' : 'symbol' : '1.0-0' }}</b></li>
+          }
+        </ul>
+      </div>
+    </div>
+  </div>
+}
+
+<section class="card tabela-card">
+  @if (lancamentos().length === 0) {
+    <p class="carregando">Nenhum lançamento em {{ nomeMes() }}. Clique em "Novo lançamento" para começar.</p>
+  } @else {
+    <div class="rolagem">
+      <table class="tabela">
+        <thead>
+          <tr><th>Descrição</th><th>Evento</th><th>Tipo</th><th>Valor</th><th>Data</th><th>Status</th><th></th></tr>
+        </thead>
+        <tbody>
+          @for (l of lancamentos(); track l.id) {
+            <tr>
+              <td>{{ l.descricao }}</td>
+              <td class="suave">{{ l.eventoTitulo || '—' }}</td>
+              <td>{{ tipoLancamento[l.tipo] }}</td>
+              <td [class.saida]="l.tipo === 'GASTO'">{{ l.valor | currency: 'BRL' }}</td>
+              <td>{{ l.data | date: 'dd/MM' }}</td>
+              <td>
+                <button type="button" class="badge" [class]="rotuloStatus(l).toLowerCase()" (click)="alternarStatus(l)"
+                  title="Clique para alterar o status">{{ rotuloStatus(l) }}</button>
+              </td>
+              <td class="acoes">
+                <button type="button" class="botao-texto" title="Editar" (click)="editar(l)"><span class="icone">edit</span></button>
+                <button type="button" class="botao-texto perigo" title="Excluir" (click)="excluir(l)"><span class="icone">delete</span></button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>
+
+@if (modalAberto()) {
+  <app-lancamento-modal [lancamento]="emEdicao()" (salvo)="aoSalvar()" (fechar)="modalAberto.set(false)" />
+}

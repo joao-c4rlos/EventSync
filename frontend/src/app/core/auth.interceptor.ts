@@ -6,7 +6,7 @@ import { AuthService } from './auth.service';
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const auth = inject(AuthService);
   const token = auth.token;
-  const rotaPublica = req.url.startsWith('/api/auth/');
+  const rotaPublica = req.url.startsWith('/api/auth/') || req.url.startsWith('/api/publico/');
 
   const requisicao =
     token && !rotaPublica ? req.clone({ setHeaders: { Authorization: `Bearer ${token}` } }) : req;

@@ -1,0 +1,134 @@
+.voltar {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  text-decoration: none;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+
+  .icone {
+    font-size: 18px;
+  }
+}
+
+h1 {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+h2 {
+  font-size: 1.15rem;
+  margin: 0 0 1rem;
+}
+
+.tipo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.85rem;
+  color: var(--cor-roxo);
+  font-weight: 500;
+  margin-bottom: 0.3rem;
+
+  .icone {
+    font-size: 18px;
+  }
+}
+
+.acoes {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.alerta.info {
+  background: var(--cor-roxo-claro);
+  color: #4f2690;
+}
+
+.link-publico {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+
+  > .icone {
+    color: var(--cor-roxo);
+    font-size: 28px;
+  }
+
+  div {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  a {
+    font-size: 0.9rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.infos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+.info {
+  display: flex;
+  gap: 0.9rem;
+  padding: 1.25rem;
+
+  > .icone {
+    color: var(--cor-roxo);
+    font-size: 26px;
+  }
+
+  div {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  small,
+  span {
+    color: var(--cor-texto-suave);
+    font-size: 0.8rem;
+  }
+
+  strong {
+    font-size: 1.05rem;
+
+    &.negativo {
+      color: var(--cor-erro);
+    }
+  }
+}
+
+.descricao {
+  margin-bottom: 1.25rem;
+
+  p {
+    margin: 0;
+    line-height: 1.6;
+    white-space: pre-line;
+  }
+}
+
+.rolagem {
+  overflow-x: auto;
+}
+
+@media (max-width: 860px) {
+  .link-publico {
+    flex-wrap: wrap;
+  }
+}
