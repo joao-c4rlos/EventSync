@@ -1,0 +1,142 @@
+.indicadores {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+  max-width: 1000px;
+}
+
+.kpi {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.1rem 1.25rem;
+
+  > .icone {
+    font-size: 30px;
+    color: var(--cor-roxo);
+    background: var(--cor-roxo-claro);
+    border-radius: 50%;
+    padding: 0.5rem;
+  }
+
+  div {
+    display: flex;
+    flex-direction: column;
+  }
+
+  small {
+    color: var(--cor-texto-suave);
+    font-size: 0.8rem;
+  }
+
+  strong {
+    font-size: 1.4rem;
+
+    &.negativo {
+      color: var(--cor-erro);
+    }
+  }
+}
+
+.relatorio-topo {
+  display: flex;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  margin-bottom: 0.75rem;
+  max-width: 1000px;
+
+  h1 {
+    font-size: 1.5rem;
+    margin: 0 1rem 0.4rem 0;
+  }
+}
+
+.filtro {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex: 1;
+  min-width: 180px;
+
+  span {
+    font-size: 0.95rem;
+  }
+
+  .input {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.85rem;
+    background: var(--cor-fundo);
+  }
+}
+
+.grafico {
+  max-width: 1000px;
+  padding: 2rem 3rem;
+  margin-bottom: 1.5rem;
+}
+
+.proximos {
+  max-width: 1000px;
+
+  h2 {
+    font-size: 1.15rem;
+    margin: 0 0 0.75rem;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  a {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.6rem 0.5rem;
+    border-radius: var(--raio);
+    color: inherit;
+    text-decoration: none;
+
+    &:hover {
+      background: var(--cor-fundo);
+    }
+  }
+}
+
+.data {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 48px;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: var(--cor-roxo);
+
+  b {
+    font-size: 1.3rem;
+  }
+}
+
+.info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+
+  small {
+    color: var(--cor-texto-suave);
+  }
+}
+
+.inscritos {
+  font-size: 0.85rem;
+  color: var(--cor-texto-suave);
+}
+
+@media (max-width: 860px) {
+  .grafico {
+    padding: 1rem;
+  }
+}

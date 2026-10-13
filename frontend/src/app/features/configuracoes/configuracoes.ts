@@ -56,10 +56,10 @@ interface OpcaoConfiguracao {
 export class Configuracoes {
   protected readonly opcoes: OpcaoConfiguracao[] = [
     { titulo: 'Configurações de usuário', descricao: 'Dados pessoais, foto de perfil', icone: 'manage_accounts', rota: '/perfil' },
-    { titulo: 'Assinatura e cobrança', descricao: 'Planos, métodos de pagamento', icone: 'credit_card' },
-    { titulo: 'Segurança e acesso', descricao: 'Alterar senha, MFA', icone: 'shield_lock' },
-    { titulo: 'Preferências do sistema', descricao: 'Idioma, zona temporal, tema', icone: 'tune' },
-    { titulo: 'Dispositivos e sessões', descricao: 'Gerenciar dispositivos, sair', icone: 'computer' },
-    { titulo: 'Gerenciamento da conta', descricao: 'Excluir conta, histórico', icone: 'settings' },
+    { titulo: 'Assinatura e cobrança', descricao: 'Planos, métodos de pagamento', icone: 'credit_card', rota: '/configuracoes/assinatura' },
+    { titulo: 'Segurança e acesso', descricao: 'Alterar senha, MFA', icone: 'shield_lock', rota: '/configuracoes/seguranca' },
+    { titulo: 'Preferências do sistema', descricao: 'Idioma, zona temporal, tema', icone: 'tune', rota: '/configuracoes/preferencias' },
+    { titulo: 'Dispositivos e sessões', descricao: 'Gerenciar dispositivos, sair', icone: 'computer', rota: '/configuracoes/sessoes' },
+    { titulo: 'Gerenciamento da conta', descricao: 'Excluir conta, histórico', icone: 'settings', rota: '/configuracoes/conta' },
   ];
 }

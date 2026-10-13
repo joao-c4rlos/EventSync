@@ -1,6 +1,8 @@
 package br.com.eventsync.usuario;
 
 import br.com.eventsync.usuario.UsuarioDtos.AlterarSenhaRequest;
+import br.com.eventsync.usuario.UsuarioDtos.ExcluirContaRequest;
+import br.com.eventsync.usuario.UsuarioDtos.PlanoRequest;
 import br.com.eventsync.usuario.UsuarioDtos.PerfilRequest;
 import br.com.eventsync.usuario.UsuarioDtos.PreferenciasRequest;
 import jakarta.validation.Valid;
@@ -37,6 +39,17 @@ public class UsuarioController {
     public UsuarioResponse atualizarPreferencias(@AuthenticationPrincipal Jwt jwt,
                                                  @Valid @RequestBody PreferenciasRequest req) {
         return UsuarioResponse.de(usuarioService.atualizarPreferencias(idDo(jwt), req));
+    }
+
+    @PutMapping("/plano")
+    public UsuarioResponse alterarPlano(@AuthenticationPrincipal Jwt jwt, @Valid @RequestBody PlanoRequest req) {
+        return UsuarioResponse.de(usuarioService.alterarPlano(idDo(jwt), req.plano()));
+    }
+
+    @PostMapping("/excluir")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void excluirConta(@AuthenticationPrincipal Jwt jwt, @Valid @RequestBody ExcluirContaRequest req) {
+        usuarioService.excluirConta(idDo(jwt), req.senha());
     }
 
     private static Long idDo(Jwt jwt) {

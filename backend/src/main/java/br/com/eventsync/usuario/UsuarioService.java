@@ -9,11 +9,16 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.DateTimeException;
+import java.time.ZoneId;
 import java.util.Locale;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
 public class UsuarioService {
+
+    private static final Set<String> IDIOMAS = Set.of("pt-BR");
 
     private final UsuarioRepository usuarios;
     private final PasswordEncoder passwordEncoder;
@@ -56,6 +61,15 @@ public class UsuarioService {
 
     @Transactional
     public Usuario atualizarPreferencias(Long id, PreferenciasRequest req) {
+        if (!IDIOMAS.contains(req.idioma())) {
+            throw RegraNegocioException.invalido("Idioma não suportado.");
+        }
+        try {
+            ZoneId.of(req.fusoHorario());
+        } catch (DateTimeException e) {
+            throw RegraNegocioException.invalido("Fuso horário inválido.");
+        }
+
         Usuario usuario = buscar(id);
         usuario.setIdioma(req.idioma());
         usuario.setFusoHorario(req.fusoHorario());
@@ -63,6 +77,22 @@ public class UsuarioService {
             usuario.setTema(req.tema());
         }
         return usuario;
+    }
+
+    @Transactional
+    public Usuario alterarPlano(Long id, Plano plano) {
+        Usuario usuario = buscar(id);
+        usuario.setPlano(plano);
+        return usuario;
+    }
+
+    @Transactional
+    public void excluirConta(Long id, String senha) {
+        Usuario usuario = buscar(id);
+        if (!passwordEncoder.matches(senha, usuario.getSenhaHash())) {
+            throw RegraNegocioException.invalido("Senha incorreta.");
+        }
+        usuarios.delete(usuario);
     }
 
     private static String vazioParaNulo(String valor) {

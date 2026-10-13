@@ -28,16 +28,42 @@
       </form>
 
       <div class="acoes">
-        <button type="button" class="botao-icone notificacoes" aria-label="Notificações">
-          <span class="icone">notifications</span>
-        </button>
+        <div class="notificacoes">
+          <button type="button" class="botao-icone" [attr.aria-expanded]="menuNotificacoesAberto()"
+            [attr.aria-label]="'Notificações' + (notificacoes.naoLidas() ? ', ' + notificacoes.naoLidas() + ' novas' : '')"
+            (click)="alternarNotificacoes()">
+            <span class="icone">notifications</span>
+            @if (notificacoes.naoLidas() > 0) {
+              <span class="ponto" aria-hidden="true"></span>
+            }
+          </button>
+
+          @if (menuNotificacoesAberto()) {
+            <div class="painel-notificacoes">
+              <h2>Notificações</h2>
+              @for (n of notificacoes.todas().slice(0, 4); track n.id) {
+                <a class="notificacao" [routerLink]="n.link">
+                  <span class="icone circulo">{{ iconeNotificacao[n.categoria] }}</span>
+                  <span>
+                    <strong>{{ n.titulo }}</strong>
+                    <small>{{ n.mensagem }}</small>
+                    <small>{{ n.detalhe }}</small>
+                  </span>
+                </a>
+              } @empty {
+                <p class="vazio">Nenhuma notificação no momento.</p>
+              }
+              <a routerLink="/notificacoes" class="ver-todos">Ver todos</a>
+            </div>
+          }
+        </div>
 
         <div class="usuario">
           <button
             type="button"
             class="botao-usuario"
             [attr.aria-expanded]="menuUsuarioAberto()"
-            (click)="menuUsuarioAberto.set(!menuUsuarioAberto())"
+            (click)="menuUsuarioAberto.set(!menuUsuarioAberto()); menuNotificacoesAberto.set(false)"
           >
             <app-avatar [nome]="usuario()?.nome ?? ''" [tamanho]="36" />
             <span class="nome">{{ primeiroNome() }}</span>

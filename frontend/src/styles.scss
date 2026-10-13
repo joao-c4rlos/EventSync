@@ -18,6 +18,25 @@
   --sombra: 0 2px 8px rgba(33, 27, 61, 0.08);
 }
 
+body.tema-escuro {
+  --cor-fundo: #17142a;
+  --cor-card: #231f3b;
+  --cor-borda: #3a3456;
+  --cor-texto: #ecebf5;
+  --cor-texto-suave: #a5a2bb;
+  --cor-roxo-claro: #3b2a63;
+  --sombra: 0 2px 8px rgba(0, 0, 0, 0.35);
+  color-scheme: dark;
+
+  .tabela th {
+    background: #2c2748;
+  }
+
+  .tabela td {
+    border-color: #2c2748;
+  }
+}
+
 *,
 *::before,
 *::after {
@@ -130,7 +149,7 @@ a {
   padding: 0.6rem 0.75rem;
   border: 1px solid var(--cor-borda);
   border-radius: 4px;
-  background: #fff;
+  background: var(--cor-card);
   font: inherit;
   color: inherit;
   transition: border-color 0.15s, box-shadow 0.15s;

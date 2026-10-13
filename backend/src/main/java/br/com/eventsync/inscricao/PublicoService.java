@@ -31,13 +31,12 @@ public class PublicoService {
         if (!evento.aceitaInscricoes()) {
             throw RegraNegocioException.invalido("As inscrições para este evento estão encerradas.");
         }
-        if (inscricoes.countByEventoId(evento.getId()) >= evento.getCapacidade()) {
-            throw RegraNegocioException.invalido("As vagas para este evento estão esgotadas.");
-        }
-
         String email = req.email().trim().toLowerCase(Locale.ROOT);
         if (inscricoes.existsByEventoIdAndEmailIgnoreCase(evento.getId(), email)) {
             throw RegraNegocioException.conflito("Este e-mail já está inscrito neste evento.");
+        }
+        if (inscricoes.countByEventoId(evento.getId()) >= evento.getCapacidade()) {
+            throw RegraNegocioException.invalido("As vagas para este evento estão esgotadas.");
         }
 
         Inscricao inscricao = new Inscricao();

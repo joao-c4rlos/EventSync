@@ -1,0 +1,66 @@
+@if (indicadores(); as i) {
+  <div class="indicadores">
+    <div class="card kpi"><span class="icone">event</span><div><small>Eventos cadastrados</small><strong>{{ i.totalEventos }}</strong></div></div>
+    <div class="card kpi"><span class="icone">upcoming</span><div><small>Próximos 30 dias</small><strong>{{ i.eventosProximos }}</strong></div></div>
+    <div class="card kpi"><span class="icone">how_to_reg</span><div><small>Inscrições no mês</small><strong>{{ i.inscricoesNoMes }}</strong></div></div>
+    <div class="card kpi">
+      <span class="icone">savings</span>
+      <div><small>Lucro real no mês</small><strong [class.negativo]="i.lucroRealNoMes < 0">{{ i.lucroRealNoMes | currency: 'BRL' }}</strong></div>
+    </div>
+  </div>
+}
+
+<div class="relatorio-topo">
+  <h1>Relatório</h1>
+  <label class="filtro">
+    <span>Período</span>
+    <select class="input" [value]="meses()" (change)="meses.set(+$any($event.target).value)">
+      @for (p of periodos; track p.meses) {
+        <option [value]="p.meses">{{ p.rotulo }}</option>
+      }
+    </select>
+  </label>
+  <label class="filtro">
+    <span>Evento</span>
+    <select class="input" (change)="selecionar('A', $any($event.target).value)">
+      <option value="">Todos os eventos</option>
+      @for (e of eventos(); track e.id) {
+        <option [value]="e.id" [selected]="e.id === eventoA()">{{ e.titulo }}</option>
+      }
+    </select>
+  </label>
+  @if (eventoA() !== null) {
+    <label class="filtro">
+      <span>Comparar com</span>
+      <select class="input" (change)="selecionar('B', $any($event.target).value)">
+        <option value="">Nenhum</option>
+        @for (e of eventos(); track e.id) {
+          @if (e.id !== eventoA()) {
+            <option [value]="e.id" [selected]="e.id === eventoB()">{{ e.titulo }}</option>
+          }
+        }
+      </select>
+    </label>
+  }
+</div>
+
+<section class="card grafico">
+  <app-grafico-linhas [titulo]="titulo()" [rotulos]="rotulos()" [series]="series()" />
+</section>
+
+@if (indicadores()?.proximosEventos?.length) {
+  <section class="card proximos">
+    <h2>Próximos eventos</h2>
+    <ul>
+      @for (e of indicadores()!.proximosEventos; track e.id) {
+        <li>
+          <a [routerLink]="['/eventos', e.id]">
+            <span class="data"><b>{{ e.dataInicio | date: 'dd' }}</b>{{ e.dataInicio | date: 'MMM' }}</span>
+            <span class="info"><strong>{{ e.titulo }}</strong><small>{{ e.local }} · {{ hora(e.horaInicio) }}</small></span>
+            <span class="inscritos">{{ e.inscritos }}/{{ e.capacidade }}</span>
+          </a>
+        </li>
+      }
+    </ul>
+  </section>
+}

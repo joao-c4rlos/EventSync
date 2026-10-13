@@ -128,6 +128,31 @@ export interface ResumoMensal {
   serieLucroReal: PontoSerie[];
 }
 
+export interface Indicadores {
+  totalEventos: number;
+  eventosProximos: number;
+  inscricoesNoMes: number;
+  lucroRealNoMes: number;
+  proximosEventos: Evento[];
+}
+
+export interface InscricoesPorPeriodo {
+  meses: string[];
+  series: { eventoId: number | null; titulo: string; valores: number[] }[];
+}
+
+export type CategoriaNotificacao = 'EVENTO_PROXIMO' | 'PAGAMENTO_PENDENTE' | 'RECEBIMENTO_PENDENTE';
+
+export interface Notificacao {
+  id: string;
+  categoria: CategoriaNotificacao;
+  titulo: string;
+  mensagem: string;
+  detalhe: string;
+  data: string;
+  link: string;
+}
+
 export interface ProblemaApi {
   detail?: string;
   campos?: Record<string, string>;

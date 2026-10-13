@@ -2,6 +2,7 @@ package br.com.eventsync.usuario;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -47,8 +48,14 @@ public final class UsuarioDtos {
     }
 
     public record PreferenciasRequest(
-            @NotBlank String idioma,
-            @NotBlank String fusoHorario,
+            @NotBlank(message = "Selecione o idioma.") String idioma,
+            @NotBlank(message = "Selecione o fuso horário.") String fusoHorario,
             Tema tema) {
+    }
+
+    public record PlanoRequest(@NotNull(message = "Selecione um plano.") Plano plano) {
+    }
+
+    public record ExcluirContaRequest(@NotBlank(message = "Informe sua senha para confirmar.") String senha) {
     }
 }

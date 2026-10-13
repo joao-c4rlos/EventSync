@@ -57,7 +57,7 @@ fieldset.tipo {
   flex-direction: column;
   border: 1px solid var(--cor-borda);
   border-radius: 4px;
-  background: #fff;
+  background: var(--cor-card);
   padding: 0.25rem;
   min-width: 200px;
   box-shadow: var(--sombra);
@@ -81,7 +81,7 @@ fieldset.tipo {
   }
 
   &.selecionado {
-    background: #dcdde4;
+    background: var(--cor-roxo-claro);
     font-weight: 500;
   }
 

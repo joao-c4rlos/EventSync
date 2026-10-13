@@ -12,6 +12,9 @@ public interface LancamentoRepository extends JpaRepository<Lancamento, Long> {
 
     Optional<Lancamento> findByIdAndOrganizadorId(Long id, Long organizadorId);
 
+    List<Lancamento> findByOrganizadorIdAndStatusAndDataBetweenOrderByData(
+            Long organizadorId, StatusLancamento status, LocalDate inicio, LocalDate fim);
+
     @Query("""
             select l from Lancamento l left join fetch l.evento
             where l.organizador.id = :organizadorId
