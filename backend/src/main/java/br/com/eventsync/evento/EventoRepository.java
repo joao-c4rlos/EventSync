@@ -21,6 +21,9 @@ public interface EventoRepository extends JpaRepository<Evento, Long> {
 
     List<Evento> findByOrganizadorId(Long organizadorId);
 
+    long countByOrganizadorIdAndStatusInAndDataInicioBetween(
+            Long organizadorId, Collection<StatusEvento> status, LocalDate inicio, LocalDate fim);
+
     @Query("""
             select e from Evento e
             where e.organizador.id = :organizadorId
@@ -28,10 +31,23 @@ public interface EventoRepository extends JpaRepository<Evento, Long> {
               and e.dataInicio between :inicio and :fim
             order by e.dataInicio, e.horaInicio
             """)
+    List<Evento> proximosNoPeriodo(@Param("organizadorId") Long organizadorId,
+                                   @Param("status") Collection<StatusEvento> status,
+                                   @Param("inicio") LocalDate inicio,
+                                   @Param("fim") LocalDate fim);
+
+    /** Próximos eventos a partir de {@code inicio}, sem limite de data final. */
+    @Query("""
+            select e from Evento e
+            where e.organizador.id = :organizadorId
+              and e.status in :status
+              and e.dataInicio >= :inicio
+            order by e.dataInicio, e.horaInicio
+            """)
     List<Evento> proximos(@Param("organizadorId") Long organizadorId,
                           @Param("status") Collection<StatusEvento> status,
                           @Param("inicio") LocalDate inicio,
-                          @Param("fim") LocalDate fim);
+                          org.springframework.data.domain.Pageable limite);
 
     @Query("""
             select e from Evento e

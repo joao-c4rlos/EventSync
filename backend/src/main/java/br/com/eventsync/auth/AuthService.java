@@ -34,6 +34,19 @@ public class AuthService {
     private final TokenRedefinicaoSenhaRepository tokensRedefinicao;
     private final PasswordEncoder passwordEncoder;
     private final TokenService tokenService;
+    private final TentativasLogin tentativas;
+
+    /** Hash descartável (gerado sob demanda) usado para igualar o tempo de resposta quando o e-mail não existe. */
+    private volatile String hashFalso;
+
+    private String hashFalso() {
+        String h = hashFalso;
+        if (h == null) {
+            h = passwordEncoder.encode("eventsync-hash-falso");
+            hashFalso = h;
+        }
+        return h;
+    }
 
     @Value("${app.frontend-url:http://localhost:4200}")
     private String frontendUrl;
@@ -56,10 +69,19 @@ public class AuthService {
 
     @Transactional(readOnly = true)
     public AuthResponse login(LoginRequest req) {
-        Usuario usuario = usuarios.findByEmailIgnoreCase(normalizarEmail(req.email()))
-                .filter(u -> passwordEncoder.matches(req.senha(), u.getSenhaHash()))
-                .orElseThrow(() -> RegraNegocioException.naoAutorizado("E-mail ou senha incorretos."));
+        String email = normalizarEmail(req.email());
+        tentativas.verificar(email);
 
+        Usuario usuario = usuarios.findByEmailIgnoreCase(email).orElse(null);
+        // Compara sempre com um hash, mesmo sem usuário, para não revelar por tempo de resposta quais e-mails existem.
+        boolean senhaConfere = passwordEncoder.matches(req.senha(),
+                usuario != null ? usuario.getSenhaHash() : hashFalso());
+        if (usuario == null || !senhaConfere) {
+            tentativas.falhou(email);
+            throw RegraNegocioException.naoAutorizado("E-mail ou senha incorretos.");
+        }
+
+        tentativas.sucesso(email);
         return autenticado(usuario, req.lembrarAtivo());
     }
 

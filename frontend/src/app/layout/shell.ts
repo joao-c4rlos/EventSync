@@ -1,3 +1,4 @@
+import { Icone } from '../shared/icone';
 import { DOCUMENT } from '@angular/common';
 import { Component, computed, DestroyRef, effect, HostListener, inject, signal } from '@angular/core';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
@@ -16,7 +17,7 @@ interface ItemMenu {
 
 @Component({
   selector: 'app-shell',
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, Avatar],
+  imports: [Icone, RouterOutlet, RouterLink, RouterLinkActive, Avatar],
   templateUrl: './shell.html',
   styleUrl: './shell.scss',
 })
@@ -33,10 +34,9 @@ export class Shell {
   protected readonly iconeNotificacao = ICONE_NOTIFICACAO;
 
   protected readonly itens: ItemMenu[] = [
-    { rota: '/dashboard', rotulo: 'Dashboard', icone: 'space_dashboard' },
-    { rota: '/eventos', rotulo: 'Eventos', icone: 'calendar_today' },
-    { rota: '/financeiro', rotulo: 'Financeiro', icone: 'currency_exchange' },
-    { rota: '/configuracoes', rotulo: 'Configurações', icone: 'settings' },
+    { rota: '/dashboard', rotulo: 'Dashboard', icone: 'layout-dashboard' },
+    { rota: '/eventos', rotulo: 'Eventos', icone: 'calendar' },
+    { rota: '/financeiro', rotulo: 'Financeiro', icone: 'wallet' },
   ];
 
   constructor() {
@@ -48,9 +48,10 @@ export class Shell {
     const intervalo = setInterval(() => this.notificacoes.atualizar(), INTERVALO_NOTIFICACOES_MS);
     inject(DestroyRef).onDestroy(() => clearInterval(intervalo));
 
-    const body = inject(DOCUMENT).body;
-    effect(() => body.classList.toggle('tema-escuro', this.usuario()?.tema === 'ESCURO'));
-    inject(DestroyRef).onDestroy(() => body.classList.remove('tema-escuro'));
+    // Tema do design system: <html data-theme="light|dark">
+    const raiz = inject(DOCUMENT).documentElement;
+    effect(() => raiz.setAttribute('data-theme', this.usuario()?.tema === 'ESCURO' ? 'dark' : 'light'));
+    inject(DestroyRef).onDestroy(() => raiz.setAttribute('data-theme', 'light'));
   }
 
   @HostListener('document:keydown.escape')

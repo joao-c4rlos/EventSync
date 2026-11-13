@@ -1,0 +1,69 @@
+EventSync - execução pelo Docker no VS Code
+
+DIAGNÓSTICO
+O log enviado em 13/11/2026 NÃO contém erro de inicialização do JPA.
+Ele confirma conexão com MySQL, aplicação da migração V3, criação do
+EntityManagerFactory, Tomcat na porta 8080 e criação dos dados de demonstração.
+"No JTA platform available" é INFO: esta aplicação usa transações locais do
+banco e não precisa de uma plataforma JTA. "undefined/unknown" nas informações
+do pool também não significa, por si só, falha de conexão.
+
+"docker compose up --build" mantém o terminal ocupado acompanhando a saída.
+Isso não é evidência de travamento. Use a opção -d para devolver o prompt.
+O log não permite descartar problemas que ocorram em outras ocasiões.
+
+COMO USAR AGORA, MESMO SEM TROCAR O PROJETO
+1. Se o terminal estiver acompanhando os logs, pressione Ctrl+C.
+   Quando iniciado com "up" sem -d, isso também para os containers.
+2. Na pasta do docker-compose.yml, execute:
+   docker compose up -d --build
+3. Confira:
+   docker compose ps
+4. Abra http://localhost:4200 (ou a porta WEB_PORT do seu .env).
+5. Para consultar mensagens sem prender o terminal:
+   docker compose logs --tail=100 --no-color backend
+
+APLICAR ESTA VERSÃO
+Mantenha a pasta atual do projeto e faça uma cópia dos arquivos antes de
+substituí-los. Copie o conteúdo desta pasta EventSync-main para a pasta atual
+que já contém docker-compose.yml. Preserve seu .env atual: este ZIP não inclui
+os arquivos .env com credenciais, mas mantém os modelos .env.example.
+
+Manter a mesma pasta/projeto Compose permite reutilizar o volume db-data atual.
+Extrair em outra pasta pode criar outro projeto Compose e outro banco vazio.
+Não use "docker compose down -v": essa opção apaga os volumes do projeto.
+
+Depois, no terminal do VS Code:
+   .\iniciar.cmd
+
+O script executa "docker compose up -d --build". O build pode levar alguns
+minutos, mas, ao terminar a inicialização, o prompt volta. Ele não garante
+que toda a aplicação já esteja pronta; confira "docker compose ps".
+
+Para logs finitos de todos os serviços:
+   .\ver-logs.cmd
+
+Para parar sem apagar os dados:
+   docker compose stop
+
+ALTERAÇÕES ENTREGUES
+- iniciar.cmd: inicia em segundo plano a partir da pasta correta.
+- ver-logs.cmd: mostra até 100 linhas por container e termina.
+- docker-compose.yml: desativa reinícios automáticos para diagnóstico local;
+  limita arquivos de log a 10 MB, com 3 arquivos por container; espera o
+  backend saudável antes de iniciar o frontend; verifica acesso SQL real no
+  healthcheck do MySQL; permite controlar DEMO_DATA pelo .env.
+- README.md: orientações de inicialização e consulta de logs atualizadas.
+
+Com restart: "no", após falha ou reinício do Docker, inicie novamente com
+.\iniciar.cmd. Essa escolha evita repetir indefinidamente uma eventual falha.
+Rotação limita o armazenamento dos logs; -d é que libera o terminal.
+
+VALIDAÇÃO E LIMITES
+O código Java, pom.xml, application.properties e migrations foram mantidos
+iguais aos do ZIP original, pois o seu log confirmou que a aplicação iniciou.
+Não houve alteração no seu banco. A estrutura YAML e o conteúdo do ZIP foram
+verificados localmente. Não foi possível executar Docker neste ambiente;
+portanto, o Compose modificado ainda precisa ser validado no seu Docker.
+Se houver erro em outra execução, envie o trecho com ERROR/Caused by e também
+"docker compose ps". Não há motivo neste log para apagar ou recriar o banco.

@@ -1,6 +1,7 @@
 package br.com.eventsync.evento;
 
 import br.com.eventsync.inscricao.Inscricao;
+import br.com.eventsync.inscricao.OrigemInscricao;
 import jakarta.validation.constraints.*;
 
 import java.math.BigDecimal;
@@ -49,7 +50,13 @@ public final class EventoDtos {
 
             @PositiveOrZero(message = "A receita prevista não pode ser negativa.")
             @Digits(integer = 10, fraction = 2, message = "Valor inválido.")
-            BigDecimal receitaPrevista) {
+            BigDecimal receitaPrevista,
+
+            Boolean gratuito,
+
+            @PositiveOrZero(message = "O valor do ingresso não pode ser negativo.")
+            @Digits(integer = 10, fraction = 2, message = "Valor inválido.")
+            BigDecimal valorIngresso) {
     }
 
     public record StatusRequest(@NotNull(message = "Informe o status.") StatusEvento status) {
@@ -71,6 +78,8 @@ public final class EventoDtos {
             BigDecimal gastoPrevisto,
             BigDecimal receitaPrevista,
             BigDecimal lucroPrevisto,
+            boolean gratuito,
+            BigDecimal valorIngresso,
             long inscritos) {
 
         public static EventoResponse de(Evento e, long inscritos) {
@@ -80,14 +89,30 @@ public final class EventoDtos {
                     e.getLocal(), e.getCapacidade(), e.getDescricao(),
                     e.getGastoPrevisto(), e.getReceitaPrevista(),
                     e.getReceitaPrevista().subtract(e.getGastoPrevisto()),
+                    e.isGratuito(), e.getValorIngresso(),
                     inscritos);
         }
     }
 
-    public record InscricaoResponse(Long id, String nome, String email, String telefone, Instant criadoEm) {
+    public record InscricaoResponse(Long id, String nome, String email, String telefone,
+                                    LocalDate dataNascimento, OrigemInscricao origem, Instant criadoEm) {
 
         public static InscricaoResponse de(Inscricao i) {
-            return new InscricaoResponse(i.getId(), i.getNome(), i.getEmail(), i.getTelefone(), i.getCriadoEm());
+            return new InscricaoResponse(i.getId(), i.getNome(), i.getEmail(), i.getTelefone(),
+                    i.getDataNascimento(), i.getOrigem(), i.getCriadoEm());
         }
+    }
+
+    /** Inscrição manual feita pelo organizador: todos os campos são opcionais. */
+    public record InscricaoManualRequest(
+            @Size(max = 120, message = "O nome deve ter no máximo 120 caracteres.")
+            String nome,
+
+            @Email(message = "E-mail inválido.")
+            @Size(max = 160, message = "O e-mail deve ter no máximo 160 caracteres.")
+            String email,
+
+            @PastOrPresent(message = "A data de nascimento não pode ser futura.")
+            LocalDate dataNascimento) {
     }
 }

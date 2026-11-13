@@ -2,8 +2,8 @@ import { hora, statusLancamento, tipoEvento } from './rotulos';
 
 describe('rotulos', () => {
   it('traduz o status do lançamento conforme o tipo', () => {
-    expect(statusLancamento('GASTO', 'PENDENTE')).toBe('Aguardando');
-    expect(statusLancamento('RECEBIMENTO', 'PENDENTE')).toBe('Aguardando');
+    expect(statusLancamento('GASTO', 'PENDENTE')).toBe('Pendente');
+    expect(statusLancamento('RECEBIMENTO', 'PENDENTE')).toBe('Pendente');
     expect(statusLancamento('GASTO', 'CONCLUIDO')).toBe('Pago');
     expect(statusLancamento('RECEBIMENTO', 'CONCLUIDO')).toBe('Recebido');
   });
@@ -14,6 +14,6 @@ describe('rotulos', () => {
   });
 
   it('retorna rótulo e ícone do tipo de evento', () => {
-    expect(tipoEvento('CASAMENTO')).toEqual({ valor: 'CASAMENTO', rotulo: 'Casamento', icone: 'favorite' });
+    expect(tipoEvento('CASAMENTO')).toEqual({ valor: 'CASAMENTO', rotulo: 'Casamento', icone: 'heart' });
   });
 });

@@ -1,29 +1,42 @@
 <div class="pagina">
-  <header class="marca">Event <span>Sync</span></header>
+  <header class="marca">Event<span>Sync</span></header>
 
   @if (naoEncontrado()) {
-    <div class="card centro">
-      <span class="icone grande">event_busy</span>
+    <div class="es-card centro">
+      <app-icone class="grande" nome="calendar-x" />
       <h1>Evento não encontrado</h1>
       <p>O link pode estar incorreto ou o evento não está mais disponível.</p>
     </div>
   } @else if (evento(); as e) {
     <div class="conteudo">
-      <section class="card detalhes">
-        <span class="tipo"><span class="icone">{{ tipo(e.tipo).icone }}</span> {{ tipo(e.tipo).rotulo }}</span>
+      <section class="es-card detalhes">
+        <div class="selos">
+          <span class="tipo"><app-icone [nome]="tipo(e.tipo).icone" />{{ tipo(e.tipo).rotulo }}</span>
+          @if (e.inscricoesAbertas) {
+            <app-status tom="success" rotulo="Inscrições abertas" />
+            @if (e.vagasRestantes <= 10) { <app-status tom="warning" rotulo="Últimas vagas" icone="clock" /> }
+          } @else if (e.status === 'CANCELADO') {
+            <app-status tom="danger" rotulo="Cancelado" />
+          } @else if (e.status === 'ENCERRADO') {
+            <app-status tom="neutral" rotulo="Encerrado" icone="calendar-check" />
+          } @else {
+            <app-status tom="danger" rotulo="Esgotado" />
+          }
+        </div>
         <h1>{{ e.titulo }}</h1>
         <p class="organizador">Organizado por {{ e.organizador }}</p>
 
         <ul>
           <li>
-            <span class="icone">calendar_today</span>
+            <app-icone nome="calendar" />
             {{ e.dataInicio | date: "EEEE, dd 'de' MMMM 'de' yyyy" }}
             @if (e.dataFim && e.dataFim !== e.dataInicio) {
               até {{ e.dataFim | date: "dd 'de' MMMM" }}
             }
           </li>
-          <li><span class="icone">schedule</span> {{ hora(e.horaInicio) }}{{ e.horaFim ? ' - ' + hora(e.horaFim) : '' }}</li>
-          <li><span class="icone">location_on</span> {{ e.local }}</li>
+          <li><app-icone nome="clock" /> {{ hora(e.horaInicio) }}{{ e.horaFim ? ' - ' + hora(e.horaFim) : '' }}</li>
+          <li><app-icone nome="map-pin" /> {{ e.local }}</li>
+          <li><app-icone nome="ticket" /> {{ e.gratuito ? 'Gratuito' : (e.valorIngresso | currency: 'BRL') }}</li>
         </ul>
 
         @if (e.descricao) {
@@ -31,16 +44,16 @@
         }
       </section>
 
-      <section class="card inscricao">
+      <section class="es-card inscricao">
         @if (inscrito()) {
           <div class="centro">
-            <span class="icone grande ok">check_circle</span>
+            <app-icone class="grande ok" nome="circle-check" />
             <h2>Inscrição confirmada!</h2>
             <p>Te esperamos no evento. Guarde esta página para consultar os detalhes.</p>
           </div>
         } @else if (!e.inscricoesAbertas) {
           <div class="centro">
-            <span class="icone grande">block</span>
+            <app-icone class="grande" nome="ban" />
             <h2>Inscrições encerradas</h2>
             <p>
               @switch (e.status) {
@@ -55,33 +68,33 @@
           <p class="vagas">{{ e.vagasRestantes }} {{ e.vagasRestantes === 1 ? 'vaga restante' : 'vagas restantes' }}</p>
 
           @if (erro()) {
-            <div class="alerta erro" role="alert">{{ erro() }}</div>
+            <app-alerta tom="danger">{{ erro() }}</app-alerta>
           }
 
           <form [formGroup]="form" (ngSubmit)="inscrever()" novalidate>
-            <div class="campo">
-              <label for="nome">Nome completo</label>
-              <input id="nome" class="input" formControlName="nome" autocomplete="name"
+            <div class="es-field">
+              <label for="nome" class="es-field__label">Nome completo</label>
+              <input id="nome" class="es-field__control" formControlName="nome" autocomplete="name"
                 [class.invalido]="form.controls.nome.touched && form.controls.nome.invalid" />
             </div>
-            <div class="campo">
-              <label for="email">E-mail</label>
-              <input id="email" type="email" class="input" formControlName="email" autocomplete="email"
+            <div class="es-field">
+              <label for="email" class="es-field__label">E-mail</label>
+              <input id="email" type="email" class="es-field__control" formControlName="email" autocomplete="email"
                 [class.invalido]="form.controls.email.touched && form.controls.email.invalid" />
             </div>
-            <div class="campo">
-              <label for="telefone">Telefone (opcional)</label>
-              <input id="telefone" class="input" formControlName="telefone" autocomplete="tel" placeholder="(11) 99999-0000"
+            <div class="es-field">
+              <label for="telefone" class="es-field__label">Telefone (opcional)</label>
+              <input id="telefone" class="es-field__control" formControlName="telefone" autocomplete="tel" placeholder="(11) 99999-0000"
                 [class.invalido]="form.controls.telefone.touched && form.controls.telefone.invalid" />
             </div>
-            <button type="submit" class="btn btn-roxo" [disabled]="enviando()">
-              {{ enviando() ? 'Enviando...' : 'Confirmar inscrição' }}
+            <button type="submit" class="es-btn es-btn--primary" [disabled]="enviando()">
+              {{ enviando() ? 'Enviando…' : 'Confirmar inscrição' }}
             </button>
           </form>
         }
       </section>
     </div>
   } @else {
-    <p class="carregando">Carregando evento...</p>
+    <p class="carregando">Carregando evento…</p>
   }
 </div>

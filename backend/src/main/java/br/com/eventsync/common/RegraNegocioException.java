@@ -25,6 +25,10 @@ public class RegraNegocioException extends RuntimeException {
         return new RegraNegocioException(HttpStatus.BAD_REQUEST, mensagem);
     }
 
+    public static RegraNegocioException muitasTentativas(String mensagem) {
+        return new RegraNegocioException(HttpStatus.TOO_MANY_REQUESTS, mensagem);
+    }
+
     public static RegraNegocioException naoAutorizado(String mensagem) {
         return new RegraNegocioException(HttpStatus.UNAUTHORIZED, mensagem);
     }

@@ -1,87 +1,83 @@
-<div class="shell" [class.sidebar-aberta]="sidebarAberta()">
-  <aside class="sidebar">
-    <a routerLink="/eventos" class="marca">Event <span>Sync</span></a>
-    <nav aria-label="Menu principal">
-      @for (item of itens; track item.rota) {
-        <a [routerLink]="item.rota" routerLinkActive="ativo" class="item-menu">
-          <span class="icone" aria-hidden="true">{{ item.icone }}</span>
-          {{ item.rotulo }}
-        </a>
-      }
-    </nav>
-  </aside>
+<div class="app" [class.sidebar-aberta]="sidebarAberta()">
+  <nav class="es-nav" aria-label="Principal">
+    <a routerLink="/eventos" class="es-nav__brand marca" aria-label="EventSync">Event<b>Sync</b></a>
+    @for (item of itens; track item.rota) {
+      <a class="es-nav__item" [routerLink]="item.rota" routerLinkActive ariaCurrentWhenActive="page">
+        <app-icone [nome]="item.icone" />{{ item.rotulo }}
+      </a>
+    }
+    <div class="es-nav__group">Sistema</div>
+    <a class="es-nav__item" routerLink="/configuracoes" routerLinkActive ariaCurrentWhenActive="page">
+      <app-icone nome="settings" />Configurações
+    </a>
+  </nav>
 
   @if (sidebarAberta()) {
-    <div class="sobreposicao" (click)="sidebarAberta.set(false)"></div>
+    <div class="sobreposicao es-scrim" (click)="sidebarAberta.set(false)"></div>
   }
 
   <div class="principal">
-    <header class="topo">
-      <button type="button" class="botao-icone menu-mobile" aria-label="Abrir menu" (click)="sidebarAberta.set(true)">
-        <span class="icone">menu</span>
+    <header class="es-topbar">
+      <button type="button" class="es-btn es-btn--ghost es-btn--icon menu-mobile" aria-label="Abrir menu" (click)="sidebarAberta.set(true)">
+        <app-icone nome="menu" />
       </button>
 
-      <form class="busca" role="search" (submit)="buscar($event, termo.value)">
-        <span class="icone" aria-hidden="true">search</span>
-        <label for="busca-global" class="sr-only">Buscar evento</label>
-        <input #termo id="busca-global" type="search" placeholder="Busque um evento" />
+      <form class="es-field es-field--search es-topbar__search" role="search" (submit)="buscar($event, termo.value)">
+        <div class="es-field__wrap">
+          <app-icone nome="search" />
+          <input #termo class="es-field__control" type="search" placeholder="Busque um evento" aria-label="Busque um evento" />
+        </div>
       </form>
 
-      <div class="acoes">
-        <div class="notificacoes">
-          <button type="button" class="botao-icone" [attr.aria-expanded]="menuNotificacoesAberto()"
-            [attr.aria-label]="'Notificações' + (notificacoes.naoLidas() ? ', ' + notificacoes.naoLidas() + ' novas' : '')"
+      <div class="es-topbar__actions">
+        <div class="menu-flutuante">
+          <button type="button" class="es-btn es-btn--ghost es-btn--icon" [class.es-topbar__dot]="notificacoes.naoLidas() > 0"
+            [attr.aria-expanded]="menuNotificacoesAberto()"
+            [attr.aria-label]="'Notificações' + (notificacoes.naoLidas() ? ' (' + notificacoes.naoLidas() + ' novas)' : '')"
             (click)="alternarNotificacoes()">
-            <span class="icone">notifications</span>
-            @if (notificacoes.naoLidas() > 0) {
-              <span class="ponto" aria-hidden="true"></span>
-            }
+            <app-icone nome="bell" />
           </button>
 
           @if (menuNotificacoesAberto()) {
-            <div class="painel-notificacoes">
-              <h2>Notificações</h2>
+            <div class="painel painel-notificacoes">
+              <h2 class="painel-titulo">Notificações</h2>
               @for (n of notificacoes.todas().slice(0, 4); track n.id) {
                 <a class="notificacao" [routerLink]="n.link">
-                  <span class="icone circulo">{{ iconeNotificacao[n.categoria] }}</span>
-                  <span>
-                    <strong>{{ n.titulo }}</strong>
-                    <small>{{ n.mensagem }}</small>
-                    <small>{{ n.detalhe }}</small>
+                  <span class="es-stat__icon"><app-icone [nome]="iconeNotificacao[n.categoria]" /></span>
+                  <span class="texto">
+                    <strong class="body-strong">{{ n.titulo }}</strong>
+                    <span class="caption">{{ n.mensagem }}</span>
+                    <span class="caption sutil">{{ n.detalhe }}</span>
                   </span>
                 </a>
               } @empty {
                 <p class="vazio">Nenhuma notificação no momento.</p>
               }
-              <a routerLink="/notificacoes" class="ver-todos">Ver todos</a>
+              <a routerLink="/notificacoes" class="ver-todas">Ver todas</a>
             </div>
           }
         </div>
 
-        <div class="usuario">
-          <button
-            type="button"
-            class="botao-usuario"
-            [attr.aria-expanded]="menuUsuarioAberto()"
-            (click)="menuUsuarioAberto.set(!menuUsuarioAberto()); menuNotificacoesAberto.set(false)"
-          >
-            <app-avatar [nome]="usuario()?.nome ?? ''" [tamanho]="36" />
+        <div class="menu-flutuante">
+          <button type="button" class="es-user" [attr.aria-expanded]="menuUsuarioAberto()"
+            (click)="menuUsuarioAberto.set(!menuUsuarioAberto()); menuNotificacoesAberto.set(false)">
+            <app-avatar [nome]="usuario()?.nome ?? ''" [tamanho]="32" />
             <span class="nome">{{ primeiroNome() }}</span>
-            <span class="icone" aria-hidden="true">expand_more</span>
+            <app-icone nome="chevron-down" />
           </button>
 
           @if (menuUsuarioAberto()) {
-            <div class="menu-usuario" role="menu">
-              <a routerLink="/perfil" role="menuitem"><span class="icone">person</span> Meu perfil</a>
-              <a routerLink="/configuracoes" role="menuitem"><span class="icone">settings</span> Configurações</a>
-              <button type="button" role="menuitem" (click)="sair()"><span class="icone">logout</span> Sair</button>
+            <div class="painel painel-usuario" role="menu">
+              <a class="es-btn es-btn--ghost" routerLink="/perfil" role="menuitem"><app-icone nome="user" />Meu perfil</a>
+              <a class="es-btn es-btn--ghost" routerLink="/configuracoes" role="menuitem"><app-icone nome="settings" />Configurações</a>
+              <button type="button" class="es-btn es-btn--ghost" role="menuitem" (click)="sair()"><app-icone nome="log-out" />Sair</button>
             </div>
           }
         </div>
       </div>
     </header>
 
-    <main class="conteudo">
+    <main class="content">
       <router-outlet />
     </main>
   </div>

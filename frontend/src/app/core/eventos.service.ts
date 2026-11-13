@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Evento, EventoPayload, EventoPublico, Inscricao, StatusEvento } from './models';
+import { Evento, EventoPayload, EventoPublico, Inscricao, InscricaoManualPayload, StatusEvento } from './models';
 
 @Injectable({ providedIn: 'root' })
 export class EventosService {
@@ -36,6 +36,10 @@ export class EventosService {
 
   inscricoes(id: number): Observable<Inscricao[]> {
     return this.http.get<Inscricao[]>(`/api/eventos/${id}/inscricoes`);
+  }
+
+  adicionarInscricao(eventoId: number, dados: InscricaoManualPayload): Observable<Inscricao> {
+    return this.http.post<Inscricao>(`/api/eventos/${eventoId}/inscricoes`, dados);
   }
 
   removerInscricao(eventoId: number, inscricaoId: number): Observable<void> {

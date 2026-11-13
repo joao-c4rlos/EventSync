@@ -1,13 +1,15 @@
+import { Icone } from '../../shared/icone';
 import { DatePipe } from '@angular/common';
 import { Component, effect, inject, input, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { EventosService } from '../../core/eventos.service';
 import { Evento, StatusEvento } from '../../core/models';
-import { hora, STATUS_EVENTO, tipoEvento } from '../../shared/rotulos';
+import { BADGE_EVENTO, hora, STATUS_EVENTO, tipoEvento } from '../../shared/rotulos';
+import { Status } from '../../shared/status';
 
 @Component({
   selector: 'app-eventos',
-  imports: [RouterLink, DatePipe],
+  imports: [Icone, RouterLink, DatePipe, Status],
   templateUrl: './eventos.html',
   styleUrl: './eventos.scss',
 })
@@ -23,7 +25,7 @@ export class Eventos {
   protected readonly semNenhumEvento = signal(false);
 
   protected readonly statusOpcoes = Object.entries(STATUS_EVENTO) as [StatusEvento, string][];
-  protected readonly rotuloStatus = STATUS_EVENTO;
+  protected readonly badge = BADGE_EVENTO;
   protected readonly tipo = tipoEvento;
   protected readonly hora = hora;
 
@@ -38,6 +40,10 @@ export class Eventos {
         this.carregando.set(false);
       });
     });
+  }
+
+  protected percentual(e: Evento): number {
+    return e.capacidade > 0 ? Math.min(100, Math.round((e.inscritos / e.capacidade) * 100)) : 0;
   }
 
   protected filtrarStatus(status: string): void {

@@ -43,6 +43,8 @@ export interface Evento {
   gastoPrevisto: number;
   receitaPrevista: number;
   lucroPrevisto: number;
+  gratuito: boolean;
+  valorIngresso: number;
   inscritos: number;
 }
 
@@ -58,14 +60,27 @@ export interface EventoPayload {
   descricao: string | null;
   gastoPrevisto: number;
   receitaPrevista: number;
+  gratuito: boolean;
+  valorIngresso: number;
 }
+
+export type OrigemInscricao = 'PUBLICA' | 'MANUAL';
 
 export interface Inscricao {
   id: number;
-  nome: string;
-  email: string;
+  nome: string | null;
+  email: string | null;
   telefone: string | null;
+  dataNascimento: string | null;
+  origem: OrigemInscricao;
   criadoEm: string;
+}
+
+/** Inscrição manual: todos os campos são opcionais (dado de controle). */
+export interface InscricaoManualPayload {
+  nome: string | null;
+  email: string | null;
+  dataNascimento: string | null;
 }
 
 export interface EventoPublico {
@@ -79,6 +94,8 @@ export interface EventoPublico {
   local: string;
   descricao: string | null;
   organizador: string;
+  gratuito: boolean;
+  valorIngresso: number;
   vagasRestantes: number;
   inscricoesAbertas: boolean;
 }

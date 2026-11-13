@@ -1,48 +1,55 @@
+import { Alerta } from '../../shared/alerta';
+import { Icone } from '../../shared/icone';
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../core/auth.service';
 import { mensagemDeErro } from '../../core/erros';
 
 @Component({
   selector: 'app-login',
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [Alerta, Icone, ReactiveFormsModule, RouterLink],
   template: `
     <h1>Bem-vindo de volta!</h1>
     <p class="subtitulo">Faça login para acessar seu painel de controle</p>
 
     @if (erro()) {
-      <div class="alerta erro" role="alert">{{ erro() }}</div>
+      <app-alerta tom="danger">{{ erro() }}</app-alerta>
     }
 
     <form [formGroup]="form" (ngSubmit)="entrar()" novalidate>
-      <div class="campo">
-        <label for="email">Email</label>
-        <input id="email" type="email" class="input" formControlName="email" placeholder="Digite seu email" autocomplete="email"
+      <div class="es-field">
+        <label for="email" class="es-field__label">E-mail</label>
+        <input id="email" type="email" class="es-field__control" formControlName="email" placeholder="Digite seu email" autocomplete="email"
           [class.invalido]="form.controls.email.touched && form.controls.email.invalid" />
       </div>
 
-      <div class="campo">
-        <label for="senha">Senha</label>
+      <div class="es-field">
+        <label for="senha" class="es-field__label">Senha</label>
         <div class="senha">
-          <input id="senha" [type]="mostrarSenha() ? 'text' : 'password'" class="input" formControlName="senha"
+          <input id="senha" [type]="mostrarSenha() ? 'text' : 'password'" class="es-field__control" formControlName="senha"
             placeholder="Digite sua senha" autocomplete="current-password"
             [class.invalido]="form.controls.senha.touched && form.controls.senha.invalid" />
           <button type="button" (click)="mostrarSenha.set(!mostrarSenha())" [attr.aria-label]="mostrarSenha() ? 'Ocultar senha' : 'Mostrar senha'">
-            <span class="icone">{{ mostrarSenha() ? 'visibility_off' : 'visibility' }}</span>
+            <app-icone [nome]="mostrarSenha() ? 'eye-off' : 'eye'" />
           </button>
         </div>
       </div>
 
-      <div class="linha">
-        <label><input type="checkbox" formControlName="lembrar" /> Lembre-se</label>
+      <div class="opcoes">
+        <label class="es-check"><input type="checkbox" formControlName="lembrar" /><span class="es-check__box"></span>Lembrar de mim</label>
         <a routerLink="/esqueci-senha">Esqueceu sua senha?</a>
       </div>
 
-      <button type="submit" class="btn btn-roxo" [disabled]="enviando()">
-        {{ enviando() ? 'Entrando...' : 'Entrar' }}
+      <button type="submit" class="es-btn es-btn--primary" [disabled]="enviando()">
+        {{ enviando() ? 'Entrando…' : 'Entrar' }}
       </button>
     </form>
+
+    <p class="rodape demo">
+      Quer só explorar? Use a conta de demonstração:
+      <button type="button" class="link-demo" (click)="usarDemo()">demo@eventsync.com.br / demo12345</button>
+    </p>
 
     <p class="rodape">Novo no EventSync? <a routerLink="/cadastro">Cadastre-se</a></p>
   `,
@@ -51,6 +58,7 @@ import { mensagemDeErro } from '../../core/erros';
 export class Login {
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
 
   protected readonly form = inject(FormBuilder).nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
@@ -61,6 +69,11 @@ export class Login {
   protected readonly mostrarSenha = signal(false);
   protected readonly enviando = signal(false);
   protected readonly erro = signal('');
+
+  /** Preenche a conta de demonstração (criada pelo back-end com eventos e dados simulados). */
+  protected usarDemo(): void {
+    this.form.patchValue({ email: 'demo@eventsync.com.br', senha: 'demo12345' });
+  }
 
   protected entrar(): void {
     if (this.form.invalid) {
@@ -74,7 +87,12 @@ export class Login {
     this.erro.set('');
 
     this.auth.login(email, senha, lembrar).subscribe({
-      next: () => this.router.navigate(['/eventos']),
+      next: () => {
+        // Só aceita caminhos internos, para evitar redirecionamento para sites externos.
+        const retorno = this.route.snapshot.queryParamMap.get('retorno');
+        const destino = retorno && retorno.startsWith('/') && !retorno.startsWith('//') ? retorno : '/dashboard';
+        this.router.navigateByUrl(destino);
+      },
       error: (e) => {
         this.erro.set(mensagemDeErro(e, 'Não foi possível entrar.'));
         this.enviando.set(false);

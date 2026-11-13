@@ -2,6 +2,7 @@ package br.com.eventsync.evento;
 
 import br.com.eventsync.evento.EventoDtos.EventoRequest;
 import br.com.eventsync.evento.EventoDtos.EventoResponse;
+import br.com.eventsync.evento.EventoDtos.InscricaoManualRequest;
 import br.com.eventsync.evento.EventoDtos.InscricaoResponse;
 import br.com.eventsync.evento.EventoDtos.StatusRequest;
 import jakarta.validation.Valid;
@@ -59,6 +60,13 @@ public class EventoController {
     @GetMapping("/{id}/inscricoes")
     public List<InscricaoResponse> inscricoes(@AuthenticationPrincipal Jwt jwt, @PathVariable Long id) {
         return eventoService.listarInscricoes(idDo(jwt), id);
+    }
+
+    @PostMapping("/{id}/inscricoes")
+    @ResponseStatus(HttpStatus.CREATED)
+    public InscricaoResponse adicionarInscricao(@AuthenticationPrincipal Jwt jwt, @PathVariable Long id,
+                                                @Valid @RequestBody InscricaoManualRequest req) {
+        return eventoService.adicionarInscricaoManual(idDo(jwt), id, req);
     }
 
     @DeleteMapping("/{id}/inscricoes/{inscricaoId}")

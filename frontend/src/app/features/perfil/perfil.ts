@@ -1,3 +1,5 @@
+import { Alerta } from '../../shared/alerta';
+import { Icone } from '../../shared/icone';
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../core/auth.service';
@@ -10,7 +12,7 @@ const TELEFONE = /^$|^[0-9()+\- ]{8,20}$/;
 
 @Component({
   selector: 'app-perfil',
-  imports: [ReactiveFormsModule, Avatar],
+  imports: [Alerta, Icone, ReactiveFormsModule, Avatar],
   templateUrl: './perfil.html',
   styleUrl: './perfil.scss',
 })

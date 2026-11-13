@@ -1,3 +1,4 @@
+import { Alerta } from '../../shared/alerta';
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -6,29 +7,29 @@ import { mensagemDeErro } from '../../core/erros';
 
 @Component({
   selector: 'app-esqueci-senha',
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [Alerta, ReactiveFormsModule, RouterLink],
   template: `
     <h1>Esqueceu a senha?</h1>
     <p class="subtitulo">Informe seu e-mail e enviaremos um link para criar uma nova senha</p>
 
     @if (enviado()) {
-      <div class="alerta sucesso" role="status">
+      <app-alerta tom="success">
         Se houver uma conta com este e-mail, você receberá um link para redefinir a senha.
-      </div>
+      </app-alerta>
     } @else {
       @if (erro()) {
-        <div class="alerta erro" role="alert">{{ erro() }}</div>
+        <app-alerta tom="danger">{{ erro() }}</app-alerta>
       }
 
       <form [formGroup]="form" (ngSubmit)="enviar()" novalidate>
-        <div class="campo">
-          <label for="email">Email</label>
-          <input id="email" type="email" class="input" formControlName="email" placeholder="Digite seu email" autocomplete="email"
+        <div class="es-field">
+          <label for="email" class="es-field__label">E-mail</label>
+          <input id="email" type="email" class="es-field__control" formControlName="email" placeholder="Digite seu email" autocomplete="email"
             [class.invalido]="form.controls.email.touched && form.controls.email.invalid" />
         </div>
 
-        <button type="submit" class="btn btn-roxo" [disabled]="enviando()">
-          {{ enviando() ? 'Enviando...' : 'Enviar link' }}
+        <button type="submit" class="es-btn es-btn--primary" [disabled]="enviando()">
+          {{ enviando() ? 'Enviando…' : 'Enviar link' }}
         </button>
       </form>
     }

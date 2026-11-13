@@ -3,7 +3,10 @@ package br.com.eventsync.evento;
 import br.com.eventsync.common.RegraNegocioException;
 import br.com.eventsync.evento.EventoDtos.EventoRequest;
 import br.com.eventsync.evento.EventoDtos.EventoResponse;
+import br.com.eventsync.evento.EventoDtos.InscricaoManualRequest;
 import br.com.eventsync.evento.EventoDtos.InscricaoResponse;
+import br.com.eventsync.financeiro.IngressoFinanceiro;
+import br.com.eventsync.inscricao.OrigemInscricao;
 import br.com.eventsync.inscricao.Inscricao;
 import br.com.eventsync.inscricao.InscricaoRepository;
 import br.com.eventsync.usuario.UsuarioRepository;
@@ -29,6 +32,7 @@ public class EventoService {
     private final EventoRepository eventos;
     private final InscricaoRepository inscricoes;
     private final UsuarioRepository usuarios;
+    private final IngressoFinanceiro ingressoFinanceiro;
 
     @Transactional(readOnly = true)
     public List<EventoResponse> listar(Long organizadorId, String busca, StatusEvento status) {
@@ -90,6 +94,36 @@ public class EventoService {
     }
 
     @Transactional
+    public InscricaoResponse adicionarInscricaoManual(Long organizadorId, Long eventoId, InscricaoManualRequest req) {
+        Evento evento = buscarDoOrganizador(organizadorId, eventoId);
+        String nome = vazioParaNulo(req.nome());
+        String email = vazioParaNulo(req.email());
+        if (email != null) {
+            email = email.toLowerCase(Locale.ROOT);
+            if (inscricoes.existsByEventoIdAndEmailIgnoreCase(eventoId, email)) {
+                throw RegraNegocioException.conflito("Este e-mail já está inscrito neste evento.");
+            }
+        }
+        if (inscricoes.countByEventoId(eventoId) >= evento.getCapacidade()) {
+            throw RegraNegocioException.invalido("As vagas para este evento estão esgotadas.");
+        }
+
+        Inscricao inscricao = new Inscricao();
+        inscricao.setEvento(evento);
+        inscricao.setNome(nome);
+        inscricao.setEmail(email);
+        inscricao.setDataNascimento(req.dataNascimento());
+        inscricao.setOrigem(OrigemInscricao.MANUAL);
+        inscricoes.save(inscricao);
+        ingressoFinanceiro.registrar(inscricao);
+        return InscricaoResponse.de(inscricao);
+    }
+
+    private static String vazioParaNulo(String valor) {
+        return valor == null || valor.isBlank() ? null : valor.trim();
+    }
+
+    @Transactional
     public void removerInscricao(Long organizadorId, Long eventoId, Long inscricaoId) {
         buscarDoOrganizador(organizadorId, eventoId);
         Inscricao inscricao = inscricoes.findByIdAndEventoId(inscricaoId, eventoId)
@@ -122,6 +156,18 @@ public class EventoService {
         evento.setDescricao(req.descricao() == null || req.descricao().isBlank() ? null : req.descricao().trim());
         evento.setGastoPrevisto(req.gastoPrevisto() == null ? BigDecimal.ZERO : req.gastoPrevisto());
         evento.setReceitaPrevista(req.receitaPrevista() == null ? BigDecimal.ZERO : req.receitaPrevista());
+
+        boolean gratuito = req.gratuito() == null || req.gratuito();
+        BigDecimal valor = req.valorIngresso() == null ? BigDecimal.ZERO : req.valorIngresso();
+        if (gratuito) {
+            evento.setGratuito(true);
+            evento.setValorIngresso(BigDecimal.ZERO);
+        } else if (valor.signum() <= 0) {
+            throw RegraNegocioException.invalido("Informe o valor do ingresso.");
+        } else {
+            evento.setGratuito(false);
+            evento.setValorIngresso(valor);
+        }
     }
 
     private String gerarSlug(String titulo) {

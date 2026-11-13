@@ -43,7 +43,7 @@ public class NotificacaoService {
         LocalDate hoje = LocalDate.now(fusoDo(organizadorId));
         List<Notificacao> lista = new ArrayList<>();
 
-        for (Evento e : eventos.proximos(organizadorId, List.of(StatusEvento.RASCUNHO, StatusEvento.PUBLICADO),
+        for (Evento e : eventos.proximosNoPeriodo(organizadorId, List.of(StatusEvento.RASCUNHO, StatusEvento.PUBLICADO),
                 hoje, hoje.plusDays(DIAS_EVENTO))) {
             long dias = ChronoUnit.DAYS.between(hoje, e.getDataInicio());
             String mensagem = switch ((int) dias) {

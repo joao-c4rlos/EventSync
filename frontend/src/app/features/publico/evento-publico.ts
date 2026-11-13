@@ -1,4 +1,7 @@
-import { DatePipe } from '@angular/common';
+import { Alerta } from '../../shared/alerta';
+import { Status } from '../../shared/status';
+import { Icone } from '../../shared/icone';
+import { CurrencyPipe, DatePipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, inject, input, OnInit, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -9,7 +12,7 @@ import { hora, tipoEvento } from '../../shared/rotulos';
 
 @Component({
   selector: 'app-evento-publico',
-  imports: [ReactiveFormsModule, DatePipe],
+  imports: [Alerta, Status, Icone, ReactiveFormsModule, DatePipe, CurrencyPipe],
   templateUrl: './evento-publico.html',
   styleUrl: './evento-publico.scss',
 })

@@ -1,128 +1,93 @@
 .layout {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 340px;
-  gap: 2rem;
+  gap: var(--space-6);
   align-items: start;
-  max-width: 1000px;
 }
 
-label,
-legend,
-.rotulo {
-  font-weight: 700;
-  font-size: 0.85rem;
+.campos,
+.resumo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+
+  .es-card__head {
+    margin-bottom: 0;
+  }
 }
 
-.linha {
+.duas {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+}
+
+.capacidade {
+  max-width: 240px;
+}
+
+.opcao {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  margin-bottom: 1rem;
-
-  > label {
-    white-space: nowrap;
-  }
-
-  .input {
-    flex: 1;
-  }
-
-  .curto {
-    flex: 0 0 120px;
-  }
-}
-
-.dupla .input {
-  max-width: 160px;
+  gap: var(--space-2);
+  font-size: 0.95rem;
 }
 
 fieldset.tipo {
   border: none;
   padding: 0;
-  align-items: flex-start;
+  margin: 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 
   legend {
-    float: left;
-    margin-right: 0.75rem;
-    padding-top: 0.4rem;
+    padding: 0;
+    margin-bottom: 6px;
   }
 
-  &.invalido .lista-tipos {
-    border-color: var(--cor-erro);
+  &.es-field--error .es-field__hint {
+    color: var(--danger);
   }
 }
 
 .lista-tipos {
   display: flex;
-  flex-direction: column;
-  border: 1px solid var(--cor-borda);
-  border-radius: 4px;
-  background: var(--cor-card);
-  padding: 0.25rem;
-  min-width: 200px;
-  box-shadow: var(--sombra);
+  flex-wrap: wrap;
+  gap: var(--space-2);
 }
 
 .opcao-tipo {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  padding: 0.3rem 0.5rem;
-  border-radius: 3px;
-  font-weight: 400;
   cursor: pointer;
 
-  .icone {
-    font-size: 16px;
-  }
-
-  &:hover {
-    background: var(--cor-fundo);
+  &:focus-within {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 2px;
   }
 
   &.selecionado {
-    background: var(--cor-roxo-claro);
-    font-weight: 500;
-  }
-
-  &:focus-within {
-    outline: 2px solid var(--cor-roxo);
+    border-color: var(--primary);
   }
 }
 
-textarea {
-  resize: vertical;
+.lucro {
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border);
 }
 
-.resumo {
-  h2 {
-    text-align: center;
-    font-size: 1.2rem;
-    margin: 0 0 1.25rem;
-  }
+.es-stat__value.negativo {
+  color: var(--danger);
 }
 
-.linha-resumo {
-  display: grid;
-  grid-template-columns: 130px 1fr;
-  align-items: center;
-  gap: 0.75rem;
-  margin-bottom: 1rem;
-
-  strong {
-    font-size: 1.1rem;
-    color: var(--cor-verde-escuro);
-
-    &.negativo {
-      color: var(--cor-erro);
-    }
-  }
+.es-stat__delta app-icone {
+  font-size: 12px;
 }
 
 .acoes {
   display: flex;
-  gap: 1rem;
-  margin-top: 0.5rem;
+  justify-content: flex-end;
+  gap: var(--space-3);
 }
 
 @media (max-width: 960px) {
@@ -130,11 +95,7 @@ textarea {
     grid-template-columns: 1fr;
   }
 
-  .linha {
-    flex-wrap: wrap;
-  }
-
-  .dupla .input {
-    max-width: none;
+  .duas {
+    grid-template-columns: 1fr;
   }
 }

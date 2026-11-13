@@ -8,6 +8,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -27,6 +28,8 @@ public final class PublicoDtos {
             String local,
             String descricao,
             String organizador,
+            boolean gratuito,
+            BigDecimal valorIngresso,
             int vagasRestantes,
             boolean inscricoesAbertas) {
 
@@ -35,7 +38,8 @@ public final class PublicoDtos {
             return new EventoPublicoResponse(
                     e.getTitulo(), e.getTipo(), e.getStatus(), e.getDataInicio(), e.getDataFim(),
                     e.getHoraInicio(), e.getHoraFim(), e.getLocal(), e.getDescricao(),
-                    e.getOrganizador().getNome(), vagas, e.aceitaInscricoes() && vagas > 0);
+                    e.getOrganizador().getNome(), e.isGratuito(), e.getValorIngresso(),
+                    vagas, e.aceitaInscricoes() && vagas > 0);
         }
     }
 

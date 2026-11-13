@@ -11,6 +11,7 @@ import br.com.eventsync.financeiro.FinanceiroService;
 import br.com.eventsync.inscricao.InscricaoRepository;
 import br.com.eventsync.usuario.UsuarioService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +27,7 @@ import java.util.stream.Collectors;
 public class DashboardService {
 
     private static final int DIAS_PROXIMOS = 30;
+    private static final int LIMITE_LISTA = 5;
     private static final List<StatusEvento> ATIVOS = List.of(StatusEvento.RASCUNHO, StatusEvento.PUBLICADO);
 
     private final EventoRepository eventos;
@@ -39,7 +41,9 @@ public class DashboardService {
         LocalDate hoje = LocalDate.now(fuso);
         YearMonth mes = YearMonth.from(hoje);
 
-        List<Evento> proximos = eventos.proximos(organizadorId, ATIVOS, hoje, hoje.plusDays(DIAS_PROXIMOS));
+        List<Evento> proximos = eventos.proximos(organizadorId, ATIVOS, hoje, PageRequest.of(0, LIMITE_LISTA));
+        long nos30Dias = eventos.countByOrganizadorIdAndStatusInAndDataInicioBetween(
+                organizadorId, ATIVOS, hoje, hoje.plusDays(DIAS_PROXIMOS));
         Map<Long, Long> contagem = proximos.isEmpty() ? Map.of()
                 : inscricoes.contarPorEvento(proximos.stream().map(Evento::getId).toList()).stream()
                         .collect(Collectors.toMap(l -> (Long) l[0], l -> (Long) l[1]));
@@ -48,10 +52,10 @@ public class DashboardService {
 
         return new Indicadores(
                 eventos.countByOrganizadorId(organizadorId),
-                proximos.size(),
+                nos30Dias,
                 inscricoes.contarDoOrganizadorDesde(organizadorId, inicioDoMes),
                 financeiro.resumo(organizadorId, mes).lucroReal(),
-                proximos.stream().limit(5)
+                proximos.stream()
                         .map(e -> EventoResponse.de(e, contagem.getOrDefault(e.getId(), 0L)))
                         .toList());
     }

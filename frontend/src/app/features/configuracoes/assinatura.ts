@@ -1,3 +1,5 @@
+import { Alerta } from '../../shared/alerta';
+import { Icone } from '../../shared/icone';
 import { CurrencyPipe } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
@@ -15,32 +17,32 @@ interface OpcaoPlano {
 
 @Component({
   selector: 'app-assinatura',
-  imports: [RouterLink, CurrencyPipe],
+  imports: [Alerta, Icone, RouterLink, CurrencyPipe],
   template: `
-    <a routerLink="/configuracoes" class="voltar"><span class="icone">arrow_back</span> Configurações</a>
+    <a routerLink="/configuracoes" class="es-btn es-btn--ghost es-btn--sm voltar"><app-icone nome="arrow-left" /> Configurações</a>
     <h1>Assinatura e cobrança</h1>
-    <p class="aviso">Ambiente de demonstração: a troca de plano é simulada e nenhuma cobrança é realizada.</p>
+    <app-alerta tom="info" titulo="Ambiente de demonstração">A troca de plano é simulada e nenhuma cobrança é realizada.</app-alerta>
 
     @if (erro()) {
-      <div class="alerta erro" role="alert">{{ erro() }}</div>
+      <app-alerta tom="danger">{{ erro() }}</app-alerta>
     }
 
     <div class="planos">
       @for (p of planos; track p.plano) {
-        <div class="card plano" [class.atual]="usuario()?.plano === p.plano">
+        <div class="es-card plano" [class.atual]="usuario()?.plano === p.plano">
           <h2>{{ p.nome }}</h2>
           <p class="preco">
             @if (p.preco === 0) { Grátis } @else { {{ p.preco | currency: 'BRL' }}<small>/mês</small> }
           </p>
           <ul>
             @for (r of p.recursos; track r) {
-              <li><span class="icone">check</span> {{ r }}</li>
+              <li><app-icone nome="check" /> {{ r }}</li>
             }
           </ul>
           @if (usuario()?.plano === p.plano) {
             <span class="selo">Plano atual</span>
           } @else {
-            <button type="button" class="btn btn-roxo" [disabled]="alterando()" (click)="escolher(p.plano)">Escolher plano</button>
+            <button type="button" class="es-btn es-btn--primary" [disabled]="alterando()" (click)="escolher(p.plano)">Escolher plano</button>
           }
         </div>
       }
@@ -48,16 +50,15 @@ interface OpcaoPlano {
   `,
   styleUrl: './config-pagina.scss',
   styles: `
-    .aviso { color: var(--cor-texto-suave); font-size: 0.9rem; margin: -0.75rem 0 1.5rem; }
-    .planos { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.25rem; max-width: 960px; }
-    .plano { max-width: none; display: flex; flex-direction: column; border: 2px solid transparent; }
-    .plano.atual { border-color: var(--cor-roxo); }
-    .preco { font-size: 1.8rem; font-weight: 700; margin: 0 0 1rem; }
-    .preco small { font-size: 0.9rem; font-weight: 400; color: var(--cor-texto-suave); }
-    ul { list-style: none; padding: 0; margin: 0 0 1.5rem; flex: 1; display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.9rem; }
-    li { display: flex; align-items: center; gap: 0.4rem; }
-    li .icone { color: var(--cor-verde); font-size: 18px; }
-    .selo { text-align: center; padding: 0.7rem; border-radius: var(--raio); background: var(--cor-roxo-claro); color: var(--cor-roxo); font-weight: 500; }
+    .planos { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: var(--space-6); max-width: 960px; }
+    .plano { max-width: none; display: flex; flex-direction: column; border: 2px solid var(--border); }
+    .plano.atual { border-color: var(--primary); }
+    .preco { font: 600 32px/40px var(--font-display); margin: 0 0 var(--space-4); }
+    .preco small { font: 400 14px/22px var(--font-text); color: var(--ink-muted); }
+    ul { list-style: none; padding: 0; margin: 0 0 1.5rem; flex: 1; display: flex; flex-direction: column; gap: var(--space-2); font-size: 14px; }
+    li { display: flex; align-items: center; gap: var(--space-2); }
+    li .icone { color: var(--success); font-size: 16px; }
+    .selo { text-align: center; padding: var(--space-2); border-radius: var(--radius-md); background: var(--primary-soft); color: var(--primary); font-weight: 600; }
   `,
 })
 export class Assinatura {

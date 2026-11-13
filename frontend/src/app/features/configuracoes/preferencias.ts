@@ -1,3 +1,5 @@
+import { Alerta } from '../../shared/alerta';
+import { Icone } from '../../shared/icone';
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -8,64 +10,65 @@ import { UsuarioService } from '../../core/usuario.service';
 
 @Component({
   selector: 'app-preferencias',
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [Alerta, Icone, ReactiveFormsModule, RouterLink],
   template: `
-    <a routerLink="/configuracoes" class="voltar"><span class="icone">arrow_back</span> Configurações</a>
+    <a routerLink="/configuracoes" class="es-btn es-btn--ghost es-btn--sm voltar"><app-icone nome="arrow-left" /> Configurações</a>
     <h1>Preferências do sistema</h1>
 
-    <form class="card" [formGroup]="form" (ngSubmit)="salvar()" novalidate>
+    <form class="es-card" [formGroup]="form" (ngSubmit)="salvar()" novalidate>
       @if (mensagem(); as m) {
-        <div class="alerta" [class]="m.tipo" role="status">{{ m.texto }}</div>
+        <app-alerta [tom]="m.tipo">{{ m.texto }}</app-alerta>
       }
 
-      <div class="campo">
-        <label for="idioma">Idioma</label>
-        <select id="idioma" class="input" formControlName="idioma">
+      <div class="es-field">
+        <label for="idioma" class="es-field__label">Idioma</label>
+        <span class="es-select-wrap"><select id="idioma" class="es-select" formControlName="idioma">
           <option value="pt-BR">Português (Brasil)</option>
           <option value="en-US" disabled>English (em breve)</option>
           <option value="es" disabled>Español (em breve)</option>
-        </select>
+        </select></span>
       </div>
 
-      <div class="campo">
-        <label for="fuso">Zona temporal</label>
-        <select id="fuso" class="input" formControlName="fusoHorario">
+      <div class="es-field">
+        <label for="fuso" class="es-field__label">Zona temporal</label>
+        <span class="es-select-wrap"><select id="fuso" class="es-select" formControlName="fusoHorario">
           @for (f of fusos; track f.valor) {
             <option [value]="f.valor">{{ f.rotulo }}</option>
           }
-        </select>
+        </select></span>
       </div>
 
-      <fieldset class="campo">
+      <fieldset class="es-field">
         <legend>Tema</legend>
         <div class="temas">
           <label class="tema" [class.ativo]="form.controls.tema.value === 'CLARO'">
             <input type="radio" formControlName="tema" value="CLARO" class="sr-only" />
-            <span class="icone">light_mode</span> Claro
+            <app-icone nome="sun" /> Claro
           </label>
           <label class="tema" [class.ativo]="form.controls.tema.value === 'ESCURO'">
             <input type="radio" formControlName="tema" value="ESCURO" class="sr-only" />
-            <span class="icone">dark_mode</span> Escuro
+            <app-icone nome="moon" /> Escuro
           </label>
         </div>
       </fieldset>
 
       <div class="acoes">
-        <button type="submit" class="btn btn-primario" [disabled]="salvando()">{{ salvando() ? 'Salvando...' : 'Salvar preferências' }}</button>
+        <button type="submit" class="es-btn es-btn--primary" [disabled]="salvando()">{{ salvando() ? 'Salvando…' : 'Salvar preferências' }}</button>
       </div>
     </form>
   `,
   styleUrl: './config-pagina.scss',
   styles: `
     fieldset { border: none; padding: 0; }
-    legend { font-weight: 500; font-size: 0.9rem; margin-bottom: 0.35rem; }
-    .temas { display: flex; gap: 1rem; }
+    legend { font-weight: 600; font-size: 13px; line-height: 18px; margin-bottom: 6px; padding: 0; }
+    .temas { display: flex; gap: var(--space-3); }
     .tema {
-      flex: 1; display: flex; align-items: center; justify-content: center; gap: 0.5rem;
-      padding: 0.9rem; border: 2px solid var(--cor-borda); border-radius: var(--raio); cursor: pointer;
+      flex: 1; display: flex; align-items: center; justify-content: center; gap: var(--space-2); font-weight: 600;
+      min-height: var(--control-height); border: 1px solid var(--border-strong); background: var(--surface-raised); border-radius: var(--radius-md); cursor: pointer;
     }
-    .tema.ativo { border-color: var(--cor-roxo); color: var(--cor-roxo); font-weight: 500; }
-    .tema:focus-within { outline: 2px solid var(--cor-roxo); outline-offset: 2px; }
+    .tema:hover { background: var(--surface-hover); }
+    .tema.ativo { border-color: var(--primary); background: var(--primary-soft); color: var(--primary); }
+    .tema:focus-within { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
   `,
 })
 export class Preferencias {

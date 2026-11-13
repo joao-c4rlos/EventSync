@@ -1,18 +1,19 @@
+import { Icone } from '../../shared/icone';
 import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../core/auth.service';
 
 @Component({
   selector: 'app-sessoes',
-  imports: [RouterLink],
+  imports: [Icone, RouterLink],
   template: `
-    <a routerLink="/configuracoes" class="voltar"><span class="icone">arrow_back</span> Configurações</a>
+    <a routerLink="/configuracoes" class="es-btn es-btn--ghost es-btn--sm voltar"><app-icone nome="arrow-left" /> Configurações</a>
     <h1>Dispositivos e sessões</h1>
 
-    <section class="card">
+    <section class="es-card">
       <h2>Sessão atual</h2>
       <div class="sessao">
-        <span class="icone">{{ movel ? 'smartphone' : 'computer' }}</span>
+        <span class="es-stat__icon selo"><app-icone [nome]="movel ? 'smartphone' : 'monitor'" /></span>
         <div>
           <strong>{{ navegador }}</strong>
           <small>{{ sistema }} · Este dispositivo</small>
@@ -21,15 +22,15 @@ import { AuthService } from '../../core/auth.service';
       <p class="descricao">
         Ao sair, o acesso deste navegador é encerrado e será preciso fazer login novamente.
       </p>
-      <button type="button" class="btn btn-secundario" (click)="auth.sair()"><span class="icone">logout</span> Sair desta sessão</button>
+      <button type="button" class="es-btn es-btn--outline" (click)="auth.sair()"><app-icone nome="log-out" /> Sair desta sessão</button>
     </section>
   `,
   styleUrl: './config-pagina.scss',
   styles: `
-    .sessao { display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; }
-    .sessao > .icone { font-size: 36px; color: var(--cor-roxo); }
+    .sessao { display: flex; align-items: center; gap: var(--space-4); margin-bottom: var(--space-4); }
+    .selo { width: 44px; height: 44px; flex: none; } .selo app-icone { font-size: 22px; }
     .sessao div { display: flex; flex-direction: column; }
-    .sessao small { color: var(--cor-texto-suave); }
+    .sessao small { color: var(--ink-muted); }
   `,
 })
 export class Sessoes {

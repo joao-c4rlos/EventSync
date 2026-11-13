@@ -1,3 +1,5 @@
+import { Alerta } from '../../shared/alerta';
+import { Icone } from '../../shared/icone';
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -7,12 +9,12 @@ import { UsuarioService } from '../../core/usuario.service';
 
 @Component({
   selector: 'app-conta',
-  imports: [FormsModule, RouterLink],
+  imports: [Alerta, Icone, FormsModule, RouterLink],
   template: `
-    <a routerLink="/configuracoes" class="voltar"><span class="icone">arrow_back</span> Configurações</a>
+    <a routerLink="/configuracoes" class="es-btn es-btn--ghost es-btn--sm voltar"><app-icone nome="arrow-left" /> Configurações</a>
     <h1>Gerenciamento da conta</h1>
 
-    <section class="card perigo">
+    <section class="es-card perigo">
       <h2>Excluir conta</h2>
       <p class="descricao">
         Esta ação é permanente. Todos os seus eventos, inscrições e lançamentos financeiros serão apagados
@@ -20,30 +22,28 @@ import { UsuarioService } from '../../core/usuario.service';
       </p>
 
       @if (erro()) {
-        <div class="alerta erro" role="alert">{{ erro() }}</div>
+        <app-alerta tom="danger">{{ erro() }}</app-alerta>
       }
 
       <form (ngSubmit)="excluir()">
-        <div class="campo">
-          <label for="senha">Digite sua senha para confirmar</label>
-          <input id="senha" type="password" class="input" name="senha" [(ngModel)]="senha" autocomplete="current-password" />
+        <div class="es-field">
+          <label for="senha" class="es-field__label">Digite sua senha para confirmar</label>
+          <input id="senha" type="password" class="es-field__control" name="senha" [(ngModel)]="senha" autocomplete="current-password" />
         </div>
-        <label class="confirmacao">
-          <input type="checkbox" name="ciente" [(ngModel)]="ciente" /> Entendo que esta ação não pode ser desfeita
+        <label class="es-check confirmacao">
+          <input type="checkbox" name="ciente" [(ngModel)]="ciente" /><span class="es-check__box"></span>Entendo que esta ação não pode ser desfeita
         </label>
-        <button type="submit" class="btn excluir" [disabled]="!senha || !ciente || excluindo()">
-          {{ excluindo() ? 'Excluindo...' : 'Excluir minha conta' }}
+        <button type="submit" class="es-btn es-btn--danger" [disabled]="!senha || !ciente || excluindo()">
+          {{ excluindo() ? 'Excluindo…' : 'Excluir minha conta' }}
         </button>
       </form>
     </section>
   `,
   styleUrl: './config-pagina.scss',
   styles: `
-    .perigo { border: 1px solid #f1c4c9; }
-    .perigo h2 { color: var(--cor-erro); }
-    .confirmacao { display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; margin-bottom: 1.25rem; cursor: pointer; }
-    .excluir { background: var(--cor-erro); }
-    .excluir:hover:not(:disabled) { background: #b92a39; }
+    .perigo { border-color: var(--danger); }
+    .perigo h2 { color: var(--danger); }
+    .confirmacao { display: flex; align-items: center; gap: var(--space-2); font-size: 14px; font-weight: 500; margin-bottom: var(--space-5); cursor: pointer; }
   `,
 })
 export class Conta {

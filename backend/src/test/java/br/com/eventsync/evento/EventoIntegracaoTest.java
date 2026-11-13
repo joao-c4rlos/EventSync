@@ -89,6 +89,73 @@ class EventoIntegracaoTest extends IntegracaoTest {
     }
 
     @Test
+    void aceitaInscricaoManualSemNenhumCampo() throws Exception {
+        String token = cadastrar("Ana", "ana@teste.com", "senhaForte1");
+        long id = criarEvento(token, "Workshop", 3, daquiDezDias);
+        String url = "/api/eventos/" + id + "/inscricoes";
+
+        enviar(post(url), token, "{}")
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.origem").value("MANUAL"))
+                .andExpect(jsonPath("$.nome").doesNotExist());
+        enviar(post(url), token, "{\"nome\": \"Bia\", \"email\": \"bia@teste.com\", \"dataNascimento\": \"1990-05-20\"}")
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.dataNascimento").value("1990-05-20"));
+        enviar(post(url), token, "{\"email\": \"BIA@teste.com\"}").andExpect(status().isConflict());
+        enviar(post(url), token, "{\"email\": \"invalido\"}").andExpect(status().isBadRequest());
+        enviar(post(url), token, "{}").andExpect(status().isCreated());
+        enviar(post(url), token, "{}").andExpect(status().isBadRequest());
+
+        enviar(get("/api/eventos/" + id), token, null).andExpect(jsonPath("$.inscritos").value(3));
+    }
+
+    @Test
+    void inscricaoPagaLancaRecebimentoESomeAoRemover() throws Exception {
+        String token = cadastrar("Ana", "ana@teste.com", "senhaForte1");
+        String corpo = """
+                {"titulo": "Show pago", "tipo": "SHOW", "dataInicio": "%s", "horaInicio": "20:00",
+                 "local": "Arena", "capacidade": 10, "gratuito": false, "valorIngresso": 80.00}
+                """.formatted(daquiDezDias);
+        String criado = enviar(post("/api/eventos"), token, corpo)
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.gratuito").value(false))
+                .andExpect(jsonPath("$.valorIngresso").value(80.0))
+                .andReturn().getResponse().getContentAsString();
+        long id = ((Number) com.jayway.jsonpath.JsonPath.read(criado, "$.id")).longValue();
+        String slug = publicar(token, id);
+
+        enviar(post("/api/publico/eventos/" + slug + "/inscricoes"), null,
+                "{\"nome\": \"Carla\", \"email\": \"carla@teste.com\"}")
+                .andExpect(status().isCreated());
+
+        String lista = enviar(get("/api/eventos/" + id + "/inscricoes"), token, null)
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andReturn().getResponse().getContentAsString();
+        long inscricaoId = ((Number) com.jayway.jsonpath.JsonPath.read(lista, "$[0].id")).longValue();
+
+        enviar(get("/api/financeiro/lancamentos"), token, null)
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].tipo").value("RECEBIMENTO"))
+                .andExpect(jsonPath("$[0].status").value("CONCLUIDO"))
+                .andExpect(jsonPath("$[0].valor").value(80.0));
+
+        enviar(delete("/api/eventos/" + id + "/inscricoes/" + inscricaoId), token, null)
+                .andExpect(status().isNoContent());
+        enviar(get("/api/financeiro/lancamentos"), token, null)
+                .andExpect(jsonPath("$", hasSize(0)));
+    }
+
+    @Test
+    void recusaEventoPagoSemValor() throws Exception {
+        String token = cadastrar("Ana", "ana@teste.com", "senhaForte1");
+        enviar(post("/api/eventos"), token, """
+                {"titulo": "Sem preço", "tipo": "SHOW", "dataInicio": "%s", "horaInicio": "20:00",
+                 "local": "Arena", "capacidade": 10, "gratuito": false}
+                """.formatted(daquiDezDias))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     void dashboardContaEventosEInscricoes() throws Exception {
         String token = cadastrar("Ana", "ana@teste.com", "senhaForte1");
         long id = criarEvento(token, "Conferência", 10, LocalDate.now().plusDays(3));

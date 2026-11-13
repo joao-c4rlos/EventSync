@@ -1,3 +1,4 @@
+import { Alerta } from '../../shared/alerta';
 import { Component, inject, input, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -7,40 +8,40 @@ import { senhasIguais } from './cadastro';
 
 @Component({
   selector: 'app-redefinir-senha',
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [Alerta, ReactiveFormsModule, RouterLink],
   template: `
     <h1>Nova senha</h1>
     <p class="subtitulo">Escolha uma nova senha para sua conta</p>
 
     @if (!token()) {
-      <div class="alerta erro" role="alert">Link inválido. Solicite um novo link de redefinição.</div>
+      <app-alerta tom="danger">Link inválido. Solicite um novo link de redefinição.</app-alerta>
       <p class="rodape"><a routerLink="/esqueci-senha">Solicitar novo link</a></p>
     } @else if (concluido()) {
-      <div class="alerta sucesso" role="status">Senha alterada com sucesso! Você já pode entrar com a nova senha.</div>
+      <app-alerta tom="success">Senha alterada com sucesso! Você já pode entrar com a nova senha.</app-alerta>
       <p class="rodape"><a routerLink="/login">Ir para o login</a></p>
     } @else {
       @if (erro()) {
-        <div class="alerta erro" role="alert">{{ erro() }}</div>
+        <app-alerta tom="danger">{{ erro() }}</app-alerta>
       }
 
       <form [formGroup]="form" (ngSubmit)="salvar()" novalidate>
-        <div class="campo">
-          <label for="senha">Nova senha</label>
-          <input id="senha" type="password" class="input" formControlName="senha" placeholder="Mínimo de 8 caracteres"
+        <div class="es-field">
+          <label for="senha" class="es-field__label">Nova senha</label>
+          <input id="senha" type="password" class="es-field__control" formControlName="senha" placeholder="Mínimo de 8 caracteres"
             autocomplete="new-password" [class.invalido]="form.controls.senha.touched && form.controls.senha.invalid" />
         </div>
 
-        <div class="campo">
-          <label for="confirmacao">Confirme a nova senha</label>
-          <input id="confirmacao" type="password" class="input" formControlName="confirmacao" placeholder="Repita a senha"
+        <div class="es-field">
+          <label for="confirmacao" class="es-field__label">Confirme a nova senha</label>
+          <input id="confirmacao" type="password" class="es-field__control" formControlName="confirmacao" placeholder="Repita a senha"
             autocomplete="new-password" [class.invalido]="form.controls.confirmacao.touched && form.hasError('senhasDiferentes')" />
           @if (form.controls.confirmacao.touched && form.hasError('senhasDiferentes')) {
-            <span class="erro-campo">As senhas não conferem.</span>
+            <span class="es-field__hint es-field__hint--erro">As senhas não conferem.</span>
           }
         </div>
 
-        <button type="submit" class="btn btn-roxo" [disabled]="enviando()">
-          {{ enviando() ? 'Salvando...' : 'Salvar nova senha' }}
+        <button type="submit" class="es-btn es-btn--primary" [disabled]="enviando()">
+          {{ enviando() ? 'Salvando…' : 'Salvar nova senha' }}
         </button>
       </form>
     }

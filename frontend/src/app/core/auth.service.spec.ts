@@ -62,10 +62,10 @@ describe('AuthService e guards', () => {
     expect(executar(visitanteGuard)).toBe(true);
   });
 
-  it('redireciona usuários logados para os eventos nas telas de login', () => {
+  it('redireciona usuários logados para o dashboard nas telas de login', () => {
     entrar(false);
     expect(executar(autenticadoGuard)).toBe(true);
     const resultado = executar(visitanteGuard) as UrlTree;
-    expect(TestBed.inject(Router).serializeUrl(resultado)).toBe('/eventos');
+    expect(TestBed.inject(Router).serializeUrl(resultado)).toBe('/dashboard');
   });
 });

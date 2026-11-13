@@ -1,107 +1,157 @@
 @if (evento(); as e) {
-  <a routerLink="/eventos" class="voltar"><span class="icone">arrow_back</span> Eventos</a>
-
-  <div class="cabecalho-pagina">
+  <div class="pagina">
     <div>
-      <span class="tipo"><span class="icone">{{ tipo(e.tipo).icone }}</span> {{ tipo(e.tipo).rotulo }}</span>
-      <h1>{{ e.titulo }} <span class="badge" [class]="e.status.toLowerCase()">{{ rotuloStatus[e.status] }}</span></h1>
+      <a routerLink="/eventos" class="es-btn es-btn--ghost es-btn--sm voltar"><app-icone nome="arrow-left" />Eventos</a>
     </div>
-    <div class="acoes">
-      @for (a of acoes(); track a.status) {
-        <button type="button" class="btn" [class.btn-primario]="a.status === 'PUBLICADO'" [class.btn-secundario]="a.status !== 'PUBLICADO'"
-          (click)="alterarStatus(a.status)">
-          <span class="icone">{{ a.icone }}</span> {{ a.rotulo }}
+
+    <div class="pagina-topo">
+      <div class="titulo">
+        <span class="tipo"><app-icone [nome]="tipo(e.tipo).icone" />{{ tipo(e.tipo).rotulo }}</span>
+        <div class="linha-titulo">
+          <h1>{{ e.titulo }}</h1>
+          <app-status [tom]="badge[e.status].tom" [rotulo]="badge[e.status].rotulo" [icone]="badge[e.status].icone" />
+        </div>
+      </div>
+      <div class="acoes">
+        @for (a of acoes(); track a.status) {
+          <button type="button" class="es-btn" [class.es-btn--primary]="a.status === 'PUBLICADO'"
+            [class.es-btn--outline]="a.status !== 'PUBLICADO'" (click)="pedirStatus(a.status)">
+            <app-icone [nome]="a.icone" />{{ a.rotulo }}
+          </button>
+        }
+        <a [routerLink]="['/eventos', e.id, 'editar']" class="es-btn es-btn--ghost es-btn--icon" aria-label="Editar evento"><app-icone nome="pencil" /></a>
+        <button type="button" class="es-btn es-btn--ghost es-btn--icon perigo" aria-label="Excluir evento" (click)="confirmando.set('excluir')">
+          <app-icone nome="trash-2" />
         </button>
-      }
-      <a [routerLink]="['/eventos', e.id, 'editar']" class="botao-texto" title="Editar"><span class="icone">edit</span></a>
-      <button type="button" class="botao-texto perigo" title="Excluir" (click)="excluir()"><span class="icone">delete</span></button>
-    </div>
-  </div>
-
-  @if (erro()) {
-    <div class="alerta erro" role="alert">{{ erro() }}</div>
-  }
-
-  @if (e.status === 'PUBLICADO') {
-    <div class="card link-publico">
-      <span class="icone">link</span>
-      <div>
-        <strong>Página pública de inscrição</strong>
-        <a [href]="linkPublico()" target="_blank" rel="noopener">{{ linkPublico() }}</a>
-      </div>
-      <button type="button" class="btn btn-roxo" (click)="copiarLink()">{{ copiado() ? 'Copiado!' : 'Copiar link' }}</button>
-    </div>
-  } @else if (e.status === 'RASCUNHO') {
-    <div class="alerta info">Este evento é um rascunho. Publique-o para liberar a página pública de inscrição.</div>
-  }
-
-  <div class="infos">
-    <div class="card info">
-      <span class="icone">calendar_today</span>
-      <div>
-        <small>Data</small>
-        <strong>{{ e.dataInicio | date: 'dd/MM/yyyy' }}{{ e.dataFim && e.dataFim !== e.dataInicio ? ' a ' + (e.dataFim | date: 'dd/MM/yyyy') : '' }}</strong>
-        <span>{{ hora(e.horaInicio) }}{{ e.horaFim ? ' - ' + hora(e.horaFim) : '' }}</span>
       </div>
     </div>
-    <div class="card info">
-      <span class="icone">location_on</span>
-      <div><small>Local</small><strong>{{ e.local }}</strong></div>
-    </div>
-    <div class="card info">
-      <span class="icone">group</span>
-      <div>
-        <small>Inscritos</small>
-        <strong>{{ e.inscritos }} / {{ e.capacidade }}</strong>
-        <span>{{ e.capacidade - e.inscritos }} vagas restantes</span>
-      </div>
-    </div>
-    <div class="card info">
-      <span class="icone">payments</span>
-      <div>
-        <small>Lucro previsto</small>
-        <strong [class.negativo]="e.lucroPrevisto < 0">{{ e.lucroPrevisto | currency: 'BRL' }}</strong>
-        <span>Receita {{ e.receitaPrevista | currency: 'BRL' }} · Gasto {{ e.gastoPrevisto | currency: 'BRL' }}</span>
-      </div>
-    </div>
-  </div>
 
-  @if (e.descricao) {
-    <section class="card descricao">
-      <h2>Descrição</h2>
-      <p>{{ e.descricao }}</p>
-    </section>
-  }
-
-  <section class="card">
-    <h2>Inscrições ({{ inscricoes().length }})</h2>
-    @if (inscricoes().length === 0) {
-      <p class="carregando">Nenhuma inscrição ainda.</p>
-    } @else {
-      <div class="rolagem">
-        <table class="tabela">
-          <thead>
-            <tr><th>Nome</th><th>E-mail</th><th>Telefone</th><th>Inscrito em</th><th></th></tr>
-          </thead>
-          <tbody>
-            @for (i of inscricoes(); track i.id) {
-              <tr>
-                <td>{{ i.nome }}</td>
-                <td>{{ i.email }}</td>
-                <td>{{ i.telefone || '—' }}</td>
-                <td>{{ i.criadoEm | date: 'dd/MM/yyyy HH:mm' }}</td>
-                <td>
-                  <button type="button" class="botao-texto perigo" title="Remover inscrição" (click)="removerInscricao(i)">
-                    <span class="icone">person_remove</span>
-                  </button>
-                </td>
-              </tr>
-            }
-          </tbody>
-        </table>
-      </div>
+    @if (erro()) {
+      <app-alerta tom="danger" titulo="Não foi possível concluir a ação">{{ erro() }}</app-alerta>
     }
-  </section>
+
+    @if (e.status === 'RASCUNHO') {
+      <app-alerta tom="info" titulo="Este evento é um rascunho">Publique-o para liberar a página pública de inscrição.</app-alerta>
+    }
+
+    <div class="es-tabs" role="tablist" aria-label="Seções do evento">
+      <button type="button" class="es-tab" role="tab" id="aba-geral" [attr.aria-selected]="aba() === 'geral'"
+        [attr.aria-controls]="'painel-geral'" (click)="aba.set('geral')">Visão geral</button>
+      <button type="button" class="es-tab" role="tab" id="aba-inscritos" [attr.aria-selected]="aba() === 'inscritos'"
+        [attr.aria-controls]="'painel-inscritos'" (click)="aba.set('inscritos')">Inscritos ({{ inscricoes().length }})</button>
+    </div>
+
+    @if (aba() === 'geral') {
+      <div class="pagina" id="painel-geral" role="tabpanel" aria-labelledby="aba-geral">
+        @if (e.status === 'PUBLICADO') {
+          <section class="es-card link-publico">
+            <span class="es-stat__icon"><app-icone nome="link" /></span>
+            <div class="link-texto">
+              <span class="body-strong">Página pública de inscrição</span>
+              <a [href]="linkPublico()" target="_blank" rel="noopener">{{ linkPublico() }}</a>
+            </div>
+            <button type="button" class="es-btn es-btn--secondary" (click)="copiarLink()">
+              <app-icone [nome]="copiado() ? 'check' : 'link'" />{{ copiado() ? 'Link copiado' : 'Copiar link' }}
+            </button>
+          </section>
+        }
+
+        <div class="grade-kpis">
+          <div class="es-card es-stat">
+            <span class="es-stat__label"><span class="es-stat__icon"><app-icone nome="calendar" /></span>Data</span>
+            <span class="es-stat__value valor-texto">{{ e.dataInicio | date: 'dd/MM/yyyy' }}</span>
+            <span class="es-stat__delta"><span>{{ e.dataFim && e.dataFim !== e.dataInicio ? 'até ' + (e.dataFim | date: 'dd/MM/yyyy') + ' · ' : '' }}{{ hora(e.horaInicio) }}{{ e.horaFim ? ' – ' + hora(e.horaFim) : '' }}</span></span>
+          </div>
+          <div class="es-card es-stat">
+            <span class="es-stat__label"><span class="es-stat__icon"><app-icone nome="users" /></span>Inscritos</span>
+            <span class="es-stat__value">{{ e.inscritos | number }}<span class="de"> / {{ e.capacidade | number }}</span></span>
+            <span class="es-stat__delta"><span>{{ e.capacidade - e.inscritos }} {{ e.capacidade - e.inscritos === 1 ? 'vaga restante' : 'vagas restantes' }}</span></span>
+          </div>
+          <div class="es-card es-stat">
+            <span class="es-stat__label"><span class="es-stat__icon"><app-icone nome="wallet" /></span>Lucro previsto</span>
+            <span class="es-stat__value" [class.negativo]="e.lucroPrevisto < 0">{{ e.lucroPrevisto | currency: 'BRL' }}</span>
+            <span class="es-stat__delta"><span>Receita {{ e.receitaPrevista | currency: 'BRL' }} · Gasto {{ e.gastoPrevisto | currency: 'BRL' }} · {{ e.gratuito ? 'Ingresso gratuito' : ('Ingresso ' + (e.valorIngresso | currency: 'BRL')) }}</span></span>
+          </div>
+          <div class="es-card es-stat">
+            <span class="es-stat__label"><span class="es-stat__icon"><app-icone nome="map-pin" /></span>Local</span>
+            <span class="es-stat__value valor-texto">{{ e.local }}</span>
+          </div>
+        </div>
+
+        @if (e.descricao) {
+          <section class="es-card">
+            <div class="es-card__head"><h2 class="es-card__title">Descrição</h2></div>
+            <p class="descricao">{{ e.descricao }}</p>
+          </section>
+        }
+      </div>
+    } @else {
+      <section id="painel-inscritos" role="tabpanel" aria-labelledby="aba-inscritos" class="pagina">
+        <div class="barra-inscritos">
+          <button type="button" class="es-btn es-btn--primary" (click)="adicionando.set(true)">
+            <app-icone nome="user-plus" />Adicionar inscrição
+          </button>
+        </div>
+        @if (inscricoes().length === 0) {
+          <div class="es-card vazio">
+            <span class="es-stat__icon"><app-icone nome="users" /></span>
+            <h2>Nenhuma inscrição ainda</h2>
+            <p>{{ e.status === 'PUBLICADO' ? 'Compartilhe o link da página pública ou adicione uma inscrição manualmente.' : 'Publique o evento para liberar a página pública ou adicione uma inscrição manualmente.' }}</p>
+          </div>
+        } @else {
+          <div class="es-table-wrap">
+            <table class="es-table">
+              <thead>
+                <tr><th>Participante</th><th>Código</th><th>Telefone</th><th>Nascimento</th><th>Origem</th><th>Inscrito em</th><th><span class="sr-only">Ações</span></th></tr>
+              </thead>
+              <tbody>
+                @for (i of inscricoes(); track i.id) {
+                  <tr>
+                    <td>
+                      <span class="es-person">
+                        <app-avatar [nome]="i.nome ?? ''" [tamanho]="32" />
+                        <span class="pessoa"><span class="body-strong">{{ i.nome || 'Sem nome' }}</span><span class="caption sutil">{{ i.email || 'Sem e-mail' }}</span></span>
+                      </span>
+                    </td>
+                    <td><span class="es-code">{{ codigo(i) }}</span></td>
+                    <td>{{ i.telefone || '—' }}</td>
+                    <td>{{ i.dataNascimento ? (i.dataNascimento | date: 'dd/MM/yyyy') : '—' }}</td>
+                    <td>{{ i.origem === 'MANUAL' ? 'Manual' : 'Página pública' }}</td>
+                    <td>{{ i.criadoEm | date: 'dd/MM/yyyy HH:mm' }}</td>
+                    <td class="coluna-tabela-acoes">
+                      <button type="button" class="es-btn es-btn--ghost es-btn--sm es-btn--icon perigo"
+                        [attr.aria-label]="'Remover inscrição de ' + (i.nome || i.email || codigo(i))" (click)="inscricaoRemover.set(i)">
+                        <app-icone nome="user-x" />
+                      </button>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+      </section>
+    }
+  </div>
+
+  @if (confirmando() === 'excluir') {
+    <app-confirmacao titulo="Excluir evento?" confirmarRotulo="Excluir evento" [processando]="processando()"
+      [mensagem]="'“' + e.titulo + '” e as ' + e.inscritos + ' inscrições serão removidos. Essa ação não pode ser desfeita.'"
+      (confirmar)="excluir()" (fechar)="confirmando.set(null)" />
+  }
+  @if (confirmando() === 'cancelar') {
+    <app-confirmacao titulo="Cancelar evento?" confirmarRotulo="Cancelar evento" [processando]="processando()"
+      mensagem="A página pública deixa de aceitar inscrições. Você pode reabrir o evento depois."
+      (confirmar)="alterarStatus('CANCELADO')" (fechar)="confirmando.set(null)" />
+  }
+  @if (adicionando()) {
+    <app-inscricao-manual [eventoId]="e.id" (criada)="inscricaoAdicionada($event)" (fechar)="adicionando.set(false)" />
+  }
+  @if (inscricaoRemover(); as i) {
+    <app-confirmacao titulo="Remover inscrição?" confirmarRotulo="Remover inscrição" [processando]="processando()"
+      [mensagem]="'A inscrição de ' + (i.nome || i.email || codigo(i)) + ' será removida e a vaga volta a ficar disponível.'"
+      (confirmar)="removerInscricao(i)" (fechar)="inscricaoRemover.set(null)" />
+  }
 } @else {
-  <p class="carregando">Carregando evento...</p>
+  <p class="carregando">Carregando evento…</p>
 }

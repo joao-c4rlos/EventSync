@@ -1,99 +1,138 @@
-<div class="cabecalho-pagina">
-  <h1>Gestão financeira - Por mês</h1>
-  <div class="controles">
-    <label class="seletor-mes">
-      <span>Mês: {{ nomeMes() }}</span>
-      <input type="month" [value]="mes()" (change)="trocarMes($any($event.target).value)" aria-label="Selecionar mês" />
-    </label>
-    <button type="button" class="btn btn-primario" (click)="novo()"><span class="icone">add</span> Novo lançamento</button>
-  </div>
-</div>
-
-@if (resumo(); as r) {
-  <div class="cards">
-    <div class="card indicador">
-      <h2>Valor gasto</h2>
-      <strong>{{ r.gastoRealizado | currency: 'BRL' }}</strong>
-      <app-sparkline [valores]="series().gasto" [cor]="vermelho" rotulo="Evolução dos gastos no mês" />
-    </div>
-
-    <div class="card indicador">
-      <h2>Valores previstos</h2>
-      <div class="barra-prevista">
-        <span>Final do mês <b>{{ barrasPrevistas().fim | currency: 'BRL' }}</b></span>
-        <div class="trilho"><div class="laranja" [style.width.%]="barrasPrevistas().fimPct"></div></div>
-      </div>
-      <div class="barra-prevista">
-        <span>Mês que vem <b>{{ barrasPrevistas().proximo | currency: 'BRL' }}</b></span>
-        <div class="trilho"><div class="verde" [style.width.%]="barrasPrevistas().proximoPct"></div></div>
-      </div>
-    </div>
-
-    <div class="card indicador">
-      <h2>Valores recebidos</h2>
-      <strong>{{ r.recebido | currency: 'BRL' }}</strong>
-      <app-sparkline [valores]="series().recebido" [cor]="verde" rotulo="Evolução dos recebimentos no mês" />
-    </div>
-
-    <div class="card indicador">
-      <h2>Lucros previstos</h2>
-      <strong [class.negativo]="r.lucroPrevisto < 0">{{ r.lucroPrevisto | currency: 'BRL' }}</strong>
-      <app-sparkline [valores]="series().lucroPrevisto" [cor]="corDoLucro(series().lucroPrevisto)" rotulo="Lucro previsto acumulado" />
-    </div>
-
-    <div class="card indicador">
-      <h2>Lucros reais</h2>
-      <strong [class.negativo]="r.lucroReal < 0">{{ r.lucroReal | currency: 'BRL' }}</strong>
-      <app-sparkline [valores]="series().lucroReal" [cor]="corDoLucro(series().lucroReal)" rotulo="Lucro real acumulado" />
-    </div>
-
-    <div class="card indicador">
-      <h2>Valores totais</h2>
-      <div class="totais">
-        <app-donut [fatias]="fatias()" />
-        <ul>
-          @for (f of fatias(); track f.rotulo) {
-            <li><i [style.background]="f.cor"></i> {{ f.rotulo }} <b>{{ f.valor | currency: 'BRL' : 'symbol' : '1.0-0' }}</b></li>
-          }
-        </ul>
-      </div>
+<div class="pagina">
+  <div class="pagina-topo">
+    <h1>Financeiro</h1>
+    <div class="controles">
+      <label class="es-field seletor-mes">
+        <span class="es-field__label">Mês</span>
+        <input type="month" class="es-field__control" [value]="mes()" (change)="trocarMes($any($event.target).value)" aria-label="Selecionar mês" />
+      </label>
+      <button type="button" class="es-btn es-btn--secondary" (click)="exportar()" [disabled]="lancamentos().length === 0">
+        <app-icone nome="download" />Exportar lançamentos
+      </button>
+      <button type="button" class="es-btn es-btn--primary" (click)="novo()"><app-icone nome="plus" />Novo lançamento</button>
     </div>
   </div>
-}
 
-<section class="card tabela-card">
-  @if (lancamentos().length === 0) {
-    <p class="carregando">Nenhum lançamento em {{ nomeMes() }}. Clique em "Novo lançamento" para começar.</p>
-  } @else {
-    <div class="rolagem">
-      <table class="tabela">
-        <thead>
-          <tr><th>Descrição</th><th>Evento</th><th>Tipo</th><th>Valor</th><th>Data</th><th>Status</th><th></th></tr>
-        </thead>
-        <tbody>
-          @for (l of lancamentos(); track l.id) {
-            <tr>
-              <td>{{ l.descricao }}</td>
-              <td class="suave">{{ l.eventoTitulo || '—' }}</td>
-              <td>{{ tipoLancamento[l.tipo] }}</td>
-              <td [class.saida]="l.tipo === 'GASTO'">{{ l.valor | currency: 'BRL' }}</td>
-              <td>{{ l.data | date: 'dd/MM' }}</td>
-              <td>
-                <button type="button" class="badge" [class]="rotuloStatus(l).toLowerCase()" (click)="alternarStatus(l)"
-                  title="Clique para alterar o status">{{ rotuloStatus(l) }}</button>
-              </td>
-              <td class="acoes">
-                <button type="button" class="botao-texto" title="Editar" (click)="editar(l)"><span class="icone">edit</span></button>
-                <button type="button" class="botao-texto perigo" title="Excluir" (click)="excluir(l)"><span class="icone">delete</span></button>
-              </td>
-            </tr>
-          }
-        </tbody>
-      </table>
+  @if (resumo(); as r) {
+    <div class="cards">
+      <div class="es-card es-stat">
+        <span class="es-stat__label"><span class="es-stat__icon"><app-icone nome="wallet" /></span>Valor gasto</span>
+        <span class="es-stat__value">{{ r.gastoRealizado | currency: 'BRL' }}</span>
+        <span class="es-stat__delta"><span>de {{ r.gastoTotal | currency: 'BRL' }} previstos no mês</span></span>
+        <app-sparkline [valores]="series().gasto" cor="var(--chart-4)" rotulo="Evolução dos gastos no mês" />
+      </div>
+
+      <div class="es-card es-stat">
+        <span class="es-stat__label"><span class="es-stat__icon"><app-icone nome="piggy-bank" /></span>Valor recebido</span>
+        <span class="es-stat__value">{{ r.recebido | currency: 'BRL' }}</span>
+        <span class="es-stat__delta"><span>de {{ r.receitaTotal | currency: 'BRL' }} previstos no mês</span></span>
+        <app-sparkline [valores]="series().recebido" cor="var(--chart-2)" rotulo="Evolução dos recebimentos no mês" />
+      </div>
+
+      <div class="es-card es-stat">
+        <span class="es-stat__label"><span class="es-stat__icon"><app-icone nome="calendar-clock" /></span>Valores previstos</span>
+        <div class="barra-prevista">
+          <span>Final do mês <b class="es-num">{{ barrasPrevistas().fim | currency: 'BRL' }}</b></span>
+          <div class="trilho"><div class="laranja" [style.width.%]="barrasPrevistas().fimPct"></div></div>
+        </div>
+        <div class="barra-prevista">
+          <span>Mês que vem <b class="es-num">{{ barrasPrevistas().proximo | currency: 'BRL' }}</b></span>
+          <div class="trilho"><div class="verde" [style.width.%]="barrasPrevistas().proximoPct"></div></div>
+        </div>
+      </div>
+
+      <div class="es-card es-stat">
+        <span class="es-stat__label"><span class="es-stat__icon"><app-icone nome="wallet" /></span>Lucro previsto</span>
+        <span class="es-stat__value" [class.negativo]="r.lucroPrevisto < 0">{{ r.lucroPrevisto | currency: 'BRL' }}</span>
+        <span class="es-stat__delta" [class.es-stat__delta--up]="r.lucroPrevisto >= 0" [class.es-stat__delta--down]="r.lucroPrevisto < 0">
+          <app-icone [nome]="r.lucroPrevisto >= 0 ? 'arrow-up' : 'arrow-down'" />{{ r.lucroPrevisto >= 0 ? 'Positivo' : 'Negativo' }}
+        </span>
+        <app-sparkline [valores]="series().lucroPrevisto" [cor]="corDoLucro(series().lucroPrevisto)" rotulo="Lucro previsto acumulado" />
+      </div>
+
+      <div class="es-card es-stat">
+        <span class="es-stat__label"><span class="es-stat__icon"><app-icone nome="circle-check" /></span>Lucro real</span>
+        <span class="es-stat__value" [class.negativo]="r.lucroReal < 0">{{ r.lucroReal | currency: 'BRL' }}</span>
+        <span class="es-stat__delta" [class.es-stat__delta--up]="r.lucroReal >= 0" [class.es-stat__delta--down]="r.lucroReal < 0">
+          <app-icone [nome]="r.lucroReal >= 0 ? 'arrow-up' : 'arrow-down'" />{{ r.lucroReal >= 0 ? 'Positivo' : 'Negativo' }}
+        </span>
+        <app-sparkline [valores]="series().lucroReal" [cor]="corDoLucro(series().lucroReal)" rotulo="Lucro real acumulado" />
+      </div>
+
+      <div class="es-card es-stat">
+        <span class="es-stat__label"><span class="es-stat__icon"><app-icone nome="sliders-horizontal" /></span>Valores totais</span>
+        <div class="totais">
+          <app-donut [fatias]="fatias()" />
+          <ul>
+            @for (f of fatias(); track f.rotulo) {
+              <li><i [style.background]="f.cor"></i>{{ f.rotulo }}<b class="es-num">{{ f.valor | currency: 'BRL' : 'symbol' : '1.0-0' }}</b></li>
+            }
+          </ul>
+        </div>
+      </div>
     </div>
   }
-</section>
+
+  <section>
+    <div class="es-card__head">
+      <div>
+        <h2 class="es-card__title">Lançamentos de {{ nomeMes() }}</h2>
+        <p class="es-card__sub">{{ lancamentos().length }} {{ lancamentos().length === 1 ? 'lançamento' : 'lançamentos' }} no mês</p>
+      </div>
+    </div>
+
+    @if (lancamentos().length === 0) {
+      <div class="es-card vazio">
+        <span class="es-stat__icon"><app-icone nome="wallet" /></span>
+        <h2>Nenhum lançamento em {{ nomeMes() }}</h2>
+        <p>Registre gastos e recebimentos para acompanhar o lucro previsto e o real.</p>
+        <button type="button" class="es-btn es-btn--primary" (click)="novo()"><app-icone nome="plus" />Novo lançamento</button>
+      </div>
+    } @else {
+      <div class="es-table-wrap rolagem">
+        <table class="es-table">
+          <thead>
+            <tr>
+              <th>Descrição</th><th>Evento</th><th>Tipo</th><th>Data</th><th>Status</th><th class="es-num">Valor</th>
+              <th><span class="sr-only">Ações</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (l of lancamentos(); track l.id) {
+              <tr>
+                <td class="body-strong">{{ l.descricao }}</td>
+                <td class="suave">{{ l.eventoTitulo || '—' }}</td>
+                <td>{{ tipoLancamento[l.tipo] }}</td>
+                <td class="data">{{ l.data | date: 'dd/MM/yyyy' }}</td>
+                <td>
+                  <button type="button" class="status-botao" (click)="alternarStatus(l)"
+                    [attr.aria-label]="'Alterar status de ' + l.descricao + ' (atual: ' + badgeDe(l).rotulo + ')'" title="Clique para alterar o status">
+                    <app-status [tom]="badgeDe(l).tom" [rotulo]="badgeDe(l).rotulo" />
+                  </button>
+                </td>
+                <td class="es-num" [class.saida]="l.tipo === 'GASTO'">{{ l.tipo === 'GASTO' ? '−' : '' }}{{ l.valor | currency: 'BRL' }}</td>
+                <td class="coluna-tabela-acoes">
+                  <button type="button" class="es-btn es-btn--ghost es-btn--sm es-btn--icon" [attr.aria-label]="'Editar ' + l.descricao" (click)="editar(l)">
+                    <app-icone nome="pencil" />
+                  </button>
+                  <button type="button" class="es-btn es-btn--ghost es-btn--sm es-btn--icon perigo" [attr.aria-label]="'Excluir ' + l.descricao"
+                    (click)="excluindo.set(l)"><app-icone nome="trash-2" /></button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </section>
+</div>
 
 @if (modalAberto()) {
   <app-lancamento-modal [lancamento]="emEdicao()" (salvo)="aoSalvar()" (fechar)="modalAberto.set(false)" />
+}
+
+@if (excluindo(); as l) {
+  <app-confirmacao titulo="Excluir lançamento?" confirmarRotulo="Excluir lançamento" [processando]="processando()"
+    [mensagem]="'“' + l.descricao + '” (' + (l.valor | currency: 'BRL') + ') será removido do financeiro. Essa ação não pode ser desfeita.'"
+    (confirmar)="excluir(l)" (fechar)="excluindo.set(null)" />
 }

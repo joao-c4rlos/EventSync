@@ -5,9 +5,9 @@ import { CategoriaNotificacao, Notificacao } from './models';
 const CHAVE_LIDAS = 'eventsync.notificacoes-lidas';
 
 export const ICONE_NOTIFICACAO: Record<CategoriaNotificacao, string> = {
-  EVENTO_PROXIMO: 'schedule',
-  PAGAMENTO_PENDENTE: 'payments',
-  RECEBIMENTO_PENDENTE: 'savings',
+  EVENTO_PROXIMO: 'clock',
+  PAGAMENTO_PENDENTE: 'wallet',
+  RECEBIMENTO_PENDENTE: 'piggy-bank',
 };
 
 @Injectable({ providedIn: 'root' })

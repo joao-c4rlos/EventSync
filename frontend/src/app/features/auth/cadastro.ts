@@ -1,3 +1,4 @@
+import { Alerta } from '../../shared/alerta';
 import { Component, inject, signal } from '@angular/core';
 import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -12,48 +13,48 @@ export function senhasIguais(grupo: AbstractControl): ValidationErrors | null {
 
 @Component({
   selector: 'app-cadastro',
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [Alerta, ReactiveFormsModule, RouterLink],
   template: `
     <h1>Crie sua conta</h1>
     <p class="subtitulo">Comece a organizar seus eventos em poucos minutos</p>
 
     @if (erro()) {
-      <div class="alerta erro" role="alert">{{ erro() }}</div>
+      <app-alerta tom="danger">{{ erro() }}</app-alerta>
     }
 
     <form [formGroup]="form" (ngSubmit)="cadastrar()" novalidate>
-      <div class="campo">
-        <label for="nome">Nome completo</label>
-        <input id="nome" class="input" formControlName="nome" placeholder="Digite seu nome" autocomplete="name"
+      <div class="es-field">
+        <label for="nome" class="es-field__label">Nome completo</label>
+        <input id="nome" class="es-field__control" formControlName="nome" placeholder="Digite seu nome" autocomplete="name"
           [class.invalido]="form.controls.nome.touched && form.controls.nome.invalid" />
       </div>
 
-      <div class="campo">
-        <label for="email">Email</label>
-        <input id="email" type="email" class="input" formControlName="email" placeholder="Digite seu email" autocomplete="email"
+      <div class="es-field">
+        <label for="email" class="es-field__label">E-mail</label>
+        <input id="email" type="email" class="es-field__control" formControlName="email" placeholder="Digite seu email" autocomplete="email"
           [class.invalido]="form.controls.email.touched && form.controls.email.invalid" />
       </div>
 
-      <div class="campo">
-        <label for="senha">Senha</label>
-        <input id="senha" type="password" class="input" formControlName="senha" placeholder="Mínimo de 8 caracteres"
+      <div class="es-field">
+        <label for="senha" class="es-field__label">Senha</label>
+        <input id="senha" type="password" class="es-field__control" formControlName="senha" placeholder="Mínimo de 8 caracteres"
           autocomplete="new-password" [class.invalido]="form.controls.senha.touched && form.controls.senha.invalid" />
         @if (form.controls.senha.touched && form.controls.senha.hasError('minlength')) {
-          <span class="erro-campo">A senha deve ter pelo menos 8 caracteres.</span>
+          <span class="es-field__hint es-field__hint--erro">A senha deve ter pelo menos 8 caracteres.</span>
         }
       </div>
 
-      <div class="campo">
-        <label for="confirmacao">Confirme a senha</label>
-        <input id="confirmacao" type="password" class="input" formControlName="confirmacao" placeholder="Repita a senha"
+      <div class="es-field">
+        <label for="confirmacao" class="es-field__label">Confirme a senha</label>
+        <input id="confirmacao" type="password" class="es-field__control" formControlName="confirmacao" placeholder="Repita a senha"
           autocomplete="new-password" [class.invalido]="form.controls.confirmacao.touched && form.hasError('senhasDiferentes')" />
         @if (form.controls.confirmacao.touched && form.hasError('senhasDiferentes')) {
-          <span class="erro-campo">As senhas não conferem.</span>
+          <span class="es-field__hint es-field__hint--erro">As senhas não conferem.</span>
         }
       </div>
 
-      <button type="submit" class="btn btn-roxo" [disabled]="enviando()">
-        {{ enviando() ? 'Criando conta...' : 'Criar conta' }}
+      <button type="submit" class="es-btn es-btn--primary" [disabled]="enviando()">
+        {{ enviando() ? 'Criando conta…' : 'Criar conta' }}
       </button>
     </form>
 

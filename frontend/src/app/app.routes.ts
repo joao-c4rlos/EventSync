@@ -2,7 +2,7 @@ import { Routes } from '@angular/router';
 import { autenticadoGuard, visitanteGuard } from './core/auth.guards';
 
 export const routes: Routes = [
-  { path: '', pathMatch: 'full', redirectTo: 'eventos' },
+  { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
   {
     path: 'e/:slug',
     title: 'Inscrição | EventSync',
@@ -40,5 +40,5 @@ export const routes: Routes = [
       { path: 'perfil', title: 'Perfil | EventSync', loadComponent: () => import('./features/perfil/perfil').then((m) => m.Perfil) },
     ],
   },
-  { path: '**', redirectTo: 'eventos' },
+  { path: '**', redirectTo: 'dashboard' },
 ];

@@ -1,34 +1,37 @@
-.voltar {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
-  text-decoration: none;
-  font-size: 0.9rem;
-  margin-bottom: 1rem;
-
-  .icone {
-    font-size: 18px;
-  }
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
 }
 
-.card {
+.voltar {
+  align-self: flex-start;
+  margin-left: calc(var(--space-3) * -1);
+  color: var(--ink-muted);
+}
+
+.es-card {
   max-width: 560px;
+  width: 100%;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
 }
 
 h2 {
-  font-size: 1.1rem;
-  margin: 0 0 1rem;
+  margin: 0 0 var(--space-4);
 }
 
 .descricao {
-  color: var(--cor-texto-suave);
-  font-size: 0.9rem;
-  line-height: 1.5;
-  margin: 0 0 1.25rem;
+  margin: 0 0 var(--space-5);
+  color: var(--ink-muted);
 }
 
 .acoes {
   display: flex;
-  gap: 1rem;
-  margin-top: 0.5rem;
+  gap: var(--space-3);
+  margin-top: var(--space-2);
 }

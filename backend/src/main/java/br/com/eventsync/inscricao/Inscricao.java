@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.Instant;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "inscricoes")
@@ -23,19 +24,28 @@ public class Inscricao {
     @JoinColumn(name = "evento_id")
     private Evento evento;
 
-    @Column(nullable = false, length = 120)
+    @Column(length = 120)
     private String nome;
 
-    @Column(nullable = false, length = 160)
+    @Column(length = 160)
     private String email;
 
     private String telefone;
+
+    @Column(name = "data_nascimento")
+    private LocalDate dataNascimento;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private OrigemInscricao origem = OrigemInscricao.PUBLICA;
 
     @Column(name = "criado_em", nullable = false, updatable = false)
     private Instant criadoEm;
 
     @PrePersist
     void aoCriar() {
-        criadoEm = Instant.now();
+        if (criadoEm == null) {
+            criadoEm = Instant.now();
+        }
     }
 }

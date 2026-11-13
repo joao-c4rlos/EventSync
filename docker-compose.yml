@@ -1,0 +1,66 @@
+x-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+services:
+  db:
+    image: mysql:8.4
+    restart: "no"
+    logging: *default-logging
+    environment:
+      MYSQL_DATABASE: eventsync
+      MYSQL_USER: ${DB_USER:-eventsync}
+      MYSQL_PASSWORD: ${DB_PASSWORD:?Defina DB_PASSWORD no arquivo .env}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:?Defina DB_ROOT_PASSWORD no arquivo .env}
+      TZ: America/Sao_Paulo
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - db-data:/var/lib/mysql
+      - ./docker/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    # Descomente para acessar o MySQL pelo host (ex.: rodar os testes fora do Docker)
+    # ports:
+    #   - "127.0.0.1:3306:3306"
+    healthcheck:
+      test: ["CMD-SHELL", "MYSQL_PWD=\"$$MYSQL_PASSWORD\" mysql --protocol=TCP -h 127.0.0.1 -u\"$$MYSQL_USER\" --database=\"$$MYSQL_DATABASE\" --execute='SELECT 1' >/dev/null"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 20s
+
+  backend:
+    build: ./backend
+    # Uma falha deve ficar visível uma vez, sem um ciclo infinito de stack traces.
+    restart: "no"
+    logging: *default-logging
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_URL: jdbc:mysql://db:3306/eventsync?serverTimezone=America/Sao_Paulo&allowPublicKeyRetrieval=true
+      DB_USER: ${DB_USER:-eventsync}
+      DB_PASSWORD: ${DB_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET:?Defina JWT_SECRET (Base64, 32+ bytes) no arquivo .env}
+      JWT_EXPIRATION_MINUTES: ${JWT_EXPIRATION_MINUTES:-480}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:4200}
+      DEMO_DATA: ${DEMO_DATA:-true}
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8080/actuator/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 40s
+
+  frontend:
+    build: ./frontend
+    restart: "no"
+    logging: *default-logging
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - "${WEB_PORT:-4200}:80"
+
+volumes:
+  db-data:

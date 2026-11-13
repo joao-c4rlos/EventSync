@@ -1,56 +1,58 @@
+<div class="pagina">
 <h1>Perfil</h1>
 
 <div class="perfil">
   <div class="foto">
     <app-avatar [nome]="usuario()?.nome ?? ''" [fotoUrl]="usuario()?.fotoUrl ?? null" [tamanho]="140" />
     <button type="button" class="editar-foto" aria-label="Alterar foto" disabled title="Upload de foto em breve">
-      <span class="icone">edit_square</span>
+      <app-icone nome="square-pen" />
     </button>
   </div>
 
-  <form class="card" [formGroup]="form" (ngSubmit)="salvar()" novalidate>
+  <form class="es-card" [formGroup]="form" (ngSubmit)="salvar()" novalidate>
     @if (mensagem(); as m) {
-      <div class="alerta" [class]="m.tipo" role="status">{{ m.texto }}</div>
+      <app-alerta [tom]="m.tipo">{{ m.texto }}</app-alerta>
     }
 
-    <div class="linha">
-      <label for="nome">Nome</label>
-      <input id="nome" class="input" formControlName="nome" autocomplete="name" [class.invalido]="invalido('nome')" />
+    <div class="es-field">
+      <label for="nome" class="es-field__label">Nome</label>
+      <input id="nome" class="es-field__control" formControlName="nome" autocomplete="name" [class.invalido]="invalido('nome')" />
     </div>
-    <div class="linha">
-      <label for="telefone">Telefone</label>
-      <input id="telefone" class="input" formControlName="telefone" autocomplete="tel" placeholder="(11) 3333-4444"
+    <div class="es-field">
+      <label for="telefone" class="es-field__label">Telefone</label>
+      <input id="telefone" class="es-field__control" formControlName="telefone" autocomplete="tel" placeholder="(11) 3333-4444"
         [class.invalido]="invalido('telefone')" />
     </div>
-    <div class="linha">
-      <label for="celular">Celular</label>
-      <input id="celular" class="input" formControlName="celular" autocomplete="tel" placeholder="(11) 99999-0000"
+    <div class="es-field">
+      <label for="celular" class="es-field__label">Celular</label>
+      <input id="celular" class="es-field__control" formControlName="celular" autocomplete="tel" placeholder="(11) 99999-0000"
         [class.invalido]="invalido('celular')" />
     </div>
-    <div class="linha">
-      <label for="email">E-mail</label>
-      <input id="email" type="email" class="input" formControlName="email" autocomplete="email" [class.invalido]="invalido('email')" />
+    <div class="es-field">
+      <label for="email" class="es-field__label">E-mail</label>
+      <input id="email" type="email" class="es-field__control" formControlName="email" autocomplete="email" [class.invalido]="invalido('email')" />
     </div>
-    <div class="linha">
-      <label for="nascimento">Aniversário</label>
-      <input id="nascimento" type="date" class="input" formControlName="dataNascimento" />
+    <div class="es-field">
+      <label for="nascimento" class="es-field__label">Data de nascimento</label>
+      <input id="nascimento" type="date" class="es-field__control" formControlName="dataNascimento" />
     </div>
-    <div class="linha">
-      <label for="sexo">Sexo</label>
-      <select id="sexo" class="input" formControlName="sexo">
+    <div class="es-field">
+      <label for="sexo" class="es-field__label">Sexo</label>
+      <span class="es-select-wrap"><select id="sexo" class="es-select" formControlName="sexo">
         <option [ngValue]="null">Selecione</option>
         @for (s of sexos; track s.valor) {
           <option [ngValue]="s.valor">{{ s.rotulo }}</option>
         }
-      </select>
+      </select></span>
     </div>
-    <div class="linha">
-      <label for="cidade">Cidade</label>
-      <input id="cidade" class="input" formControlName="cidade" autocomplete="address-level2" />
+    <div class="es-field">
+      <label for="cidade" class="es-field__label">Cidade</label>
+      <input id="cidade" class="es-field__control" formControlName="cidade" autocomplete="address-level2" />
     </div>
 
-    <button type="submit" class="btn btn-primario" [disabled]="salvando()">
-      {{ salvando() ? 'Salvando...' : 'Salvar alterações' }}
+    <button type="submit" class="es-btn es-btn--primary" [disabled]="salvando()">
+      {{ salvando() ? 'Salvando…' : 'Salvar alterações' }}
     </button>
   </form>
+</div>
 </div>

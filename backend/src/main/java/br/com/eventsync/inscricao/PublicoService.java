@@ -3,6 +3,7 @@ package br.com.eventsync.inscricao;
 import br.com.eventsync.common.RegraNegocioException;
 import br.com.eventsync.evento.Evento;
 import br.com.eventsync.evento.EventoRepository;
+import br.com.eventsync.financeiro.IngressoFinanceiro;
 import br.com.eventsync.evento.StatusEvento;
 import br.com.eventsync.inscricao.PublicoDtos.EventoPublicoResponse;
 import br.com.eventsync.inscricao.PublicoDtos.InscricaoRequest;
@@ -18,6 +19,7 @@ public class PublicoService {
 
     private final EventoRepository eventos;
     private final InscricaoRepository inscricoes;
+    private final IngressoFinanceiro ingressoFinanceiro;
 
     @Transactional(readOnly = true)
     public EventoPublicoResponse evento(String slug) {
@@ -45,6 +47,7 @@ public class PublicoService {
         inscricao.setEmail(email);
         inscricao.setTelefone(req.telefone() == null || req.telefone().isBlank() ? null : req.telefone().trim());
         inscricoes.save(inscricao);
+        ingressoFinanceiro.registrar(inscricao);
     }
 
     private Evento buscarVisivel(String slug) {

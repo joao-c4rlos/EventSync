@@ -56,6 +56,24 @@ class AuthIntegracaoTest extends IntegracaoTest {
     }
 
     @Test
+    void bloqueiaLoginAposVariasFalhas() throws Exception {
+        cadastrar("Ana", "bloqueio@teste.com", "senhaForte1");
+
+        for (int i = 0; i < 5; i++) {
+            enviar(post("/api/auth/login"), null, """
+                    {"email": "bloqueio@teste.com", "senha": "errada123"}
+                    """)
+                    .andExpect(status().isUnauthorized());
+        }
+
+        // Mesmo com a senha certa, a conta fica bloqueada temporariamente.
+        enviar(post("/api/auth/login"), null, """
+                {"email": "bloqueio@teste.com", "senha": "senhaForte1"}
+                """)
+                .andExpect(status().isTooManyRequests());
+    }
+
+    @Test
     void exigeTokenNasRotasPrivadas() throws Exception {
         enviar(get("/api/eventos"), null, null).andExpect(status().isUnauthorized());
         enviar(get("/api/eventos"), "token-falso", null).andExpect(status().isUnauthorized());

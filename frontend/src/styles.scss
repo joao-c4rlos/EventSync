@@ -1,266 +1,50 @@
-:root {
-  --cor-sidebar: #211b3d;
-  --cor-sidebar-texto: #a99fd6;
-  --cor-roxo: #6a35b8;
-  --cor-roxo-claro: #e4dafa;
-  --cor-ciano: #4fc8e8;
-  --cor-verde: #2aa99a;
-  --cor-verde-escuro: #238f83;
-  --cor-cinza: #777b85;
-  --cor-fundo: #e8e9f3;
-  --cor-card: #ffffff;
-  --cor-borda: #cfd2de;
-  --cor-texto: #16151c;
-  --cor-texto-suave: #6b6e7a;
-  --cor-erro: #d93848;
-  --cor-sucesso: #2e9e5b;
-  --raio: 8px;
-  --sombra: 0 2px 8px rgba(33, 27, 61, 0.08);
-}
-
-body.tema-escuro {
-  --cor-fundo: #17142a;
-  --cor-card: #231f3b;
-  --cor-borda: #3a3456;
-  --cor-texto: #ecebf5;
-  --cor-texto-suave: #a5a2bb;
-  --cor-roxo-claro: #3b2a63;
-  --sombra: 0 2px 8px rgba(0, 0, 0, 0.35);
-  color-scheme: dark;
-
-  .tabela th {
-    background: #2c2748;
-  }
-
-  .tabela td {
-    border-color: #2c2748;
-  }
-}
-
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
+/* ==========================================================================
+   Estilos do app. Tokens e componentes vêm do design system oficial:
+     src/design/tokens.css               (variáveis --primary, --space-*, classes .heading-1…)
+     src/design/eventsync-components.css (componentes es-*)
+   Aqui ficam só ajustes de base e utilitários do app — sem valores literais de cor/espaço.
+   ========================================================================== */
 
 html,
 body {
   margin: 0;
-  height: 100%;
+  min-height: 100%;
 }
 
 body {
-  font-family: 'Roboto', system-ui, sans-serif;
-  color: var(--cor-texto);
-  background: var(--cor-fundo);
-  -webkit-font-smoothing: antialiased;
+  font: 400 14px/22px var(--font-text);
 }
 
+/* Títulos de página e de card seguem a escala tipográfica do design system */
 h1 {
-  font-size: 2rem;
-  margin: 0 0 1.5rem;
+  margin: 0;
+  font: 600 28px/36px var(--font-display);
+  letter-spacing: -0.01em;
+  color: var(--ink);
 }
 
-a {
-  color: var(--cor-roxo);
+h2,
+h3 {
+  margin: 0;
+  font: 600 18px/26px var(--font-display);
+  color: var(--ink);
 }
 
-.icone {
-  font-family: 'Material Symbols Outlined';
-  font-weight: normal;
-  font-style: normal;
-  font-size: 22px;
-  line-height: 1;
-  display: inline-block;
-  white-space: nowrap;
-  direction: ltr;
-  -webkit-font-feature-settings: 'liga';
-  font-feature-settings: 'liga';
-}
-
-.card {
-  background: var(--cor-card);
-  border-radius: var(--raio);
-  box-shadow: var(--sombra);
-  padding: 1.5rem;
-}
-
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  min-width: 140px;
-  padding: 0.7rem 1.4rem;
-  border: none;
-  border-radius: 4px;
-  font: inherit;
-  font-weight: 500;
-  color: #fff;
-  cursor: pointer;
+/* Links de texto (botões e itens de menu têm cor própria nos componentes es-*) */
+a:not([class]) {
+  color: var(--primary);
+  font-weight: 600;
   text-decoration: none;
-  transition: background 0.15s, opacity 0.15s;
-
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
 }
 
-.btn-primario {
-  background: var(--cor-verde);
-
-  &:hover:not(:disabled) {
-    background: var(--cor-verde-escuro);
-  }
+a:not([class]):hover {
+  color: var(--primary-hover);
+  text-decoration: underline;
 }
 
-.btn-secundario {
-  background: var(--cor-cinza);
-
-  &:hover:not(:disabled) {
-    background: #62656e;
-  }
-}
-
-.btn-roxo {
-  background: var(--cor-roxo);
-  border-radius: var(--raio);
-
-  &:hover:not(:disabled) {
-    background: #5a2c9e;
-  }
-}
-
-.campo {
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-  margin-bottom: 1rem;
-
-  label {
-    font-weight: 500;
-    font-size: 0.9rem;
-  }
-}
-
-.input {
-  width: 100%;
-  padding: 0.6rem 0.75rem;
-  border: 1px solid var(--cor-borda);
-  border-radius: 4px;
-  background: var(--cor-card);
-  font: inherit;
-  color: inherit;
-  transition: border-color 0.15s, box-shadow 0.15s;
-
-  &:focus {
-    outline: none;
-    border-color: var(--cor-roxo);
-    box-shadow: 0 0 0 3px rgba(106, 53, 184, 0.15);
-  }
-
-  &.invalido {
-    border-color: var(--cor-erro);
-  }
-}
-
-.erro-campo {
-  color: var(--cor-erro);
-  font-size: 0.8rem;
-}
-
-.alerta {
-  padding: 0.75rem 1rem;
-  border-radius: var(--raio);
-  margin-bottom: 1rem;
-  font-size: 0.9rem;
-
-  &.erro {
-    background: #fde8ea;
-    color: #a3202e;
-  }
-
-  &.sucesso {
-    background: #e3f5ea;
-    color: #1e6e3f;
-  }
-}
-
-.cabecalho-pagina {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-
-  h1 {
-    margin: 0;
-  }
-}
-
-.badge {
-  display: inline-block;
-  padding: 0.15rem 0.7rem;
-  border-radius: 4px;
-  font-size: 0.8rem;
-  font-weight: 500;
-  white-space: nowrap;
-
-  &.rascunho { background: #e6e7ee; color: #4b4e5c; }
-  &.publicado { background: #d9f2ec; color: #1d7a6c; }
-  &.encerrado { background: var(--cor-roxo-claro); color: #4f2690; }
-  &.cancelado, &.pago { background: #f4d5d8; color: #9b2734; }
-  &.aguardando { background: #f6efc4; color: #7a6512; }
-  &.recebido { background: #cdefd6; color: #1e6e3f; }
-}
-
-.tabela {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.9rem;
-
-  th {
-    text-align: left;
-    font-weight: 700;
-    background: #eef0f4;
-    padding: 0.8rem 1rem;
-  }
-
-  td {
-    padding: 0.7rem 1rem;
-    border-bottom: 1px solid #eef0f4;
-  }
-
-  tr:last-child td {
-    border-bottom: none;
-  }
-}
-
-.botao-texto {
-  background: none;
-  border: none;
-  padding: 0.3rem;
-  cursor: pointer;
-  color: var(--cor-texto-suave);
-  display: inline-flex;
-  border-radius: 4px;
-
-  &:hover {
-    color: var(--cor-roxo);
-    background: var(--cor-fundo);
-  }
-
-  &.perigo:hover {
-    color: var(--cor-erro);
-  }
-}
-
-.carregando {
-  color: var(--cor-texto-suave);
-  padding: 2rem 0;
-  text-align: center;
+:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
 }
 
 .sr-only {
@@ -269,4 +53,90 @@ a {
   height: 1px;
   overflow: hidden;
   clip: rect(0 0 0 0);
+}
+
+.carregando {
+  color: var(--ink-muted);
+  padding: var(--space-8) 0;
+  text-align: center;
+}
+
+/* Ícones Lucide: 20px no menu e alertas, 16px em botões, campos e badges */
+.es-btn app-icone,
+.es-field__wrap > app-icone {
+  font-size: var(--icon-sm);
+}
+
+.es-badge app-icone {
+  font-size: 12px;
+}
+
+.es-nav__item app-icone,
+.es-alert > app-icone {
+  font-size: var(--icon-md);
+}
+
+.es-field__wrap > app-icone + .es-field__control {
+  padding-left: 36px;
+}
+
+.es-field__wrap > app-icone {
+  position: absolute;
+  left: var(--space-3);
+  color: var(--ink-subtle);
+  pointer-events: none;
+}
+
+/* Textarea usa o mesmo controle do TextField, com altura automática */
+textarea.es-field__control {
+  height: auto;
+  min-height: 112px;
+  padding: var(--space-2) var(--space-3);
+  resize: vertical;
+}
+
+/* Estado de erro dos controles dirigidos por formulários reativos */
+.es-field__control.invalido,
+.es-select.invalido {
+  border-color: var(--danger);
+}
+
+.es-field__hint--erro {
+  color: var(--danger);
+}
+
+/* Série 4 do gráfico (chart-4 é usado em metas) */
+.es-chart .s4 { stroke: var(--chart-4); }
+.es-chart .f4 { fill: var(--chart-4); }
+
+/* Layout de página (telas/dashboard.html do design system) */
+.pagina {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.pagina-topo {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-6);
+  flex-wrap: wrap;
+}
+
+.grade-kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--space-6);
+}
+
+.coluna-tabela-acoes {
+  text-align: right;
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+  }
 }

@@ -1,3 +1,4 @@
+import { Icone } from '../../shared/icone';
 import { CurrencyPipe } from '@angular/common';
 import { Component, computed, inject, input, OnInit, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -6,11 +7,12 @@ import { Router } from '@angular/router';
 import { mensagemDeErro } from '../../core/erros';
 import { EventosService } from '../../core/eventos.service';
 import { Evento, TipoEvento } from '../../core/models';
+import { Alerta } from '../../shared/alerta';
 import { hora, TIPOS_EVENTO } from '../../shared/rotulos';
 
 @Component({
   selector: 'app-evento-form',
-  imports: [ReactiveFormsModule, CurrencyPipe],
+  imports: [Icone, ReactiveFormsModule, CurrencyPipe, Alerta],
   templateUrl: './evento-form.html',
   styleUrl: './evento-form.scss',
 })
@@ -38,6 +40,8 @@ export class EventoForm implements OnInit {
     descricao: ['', Validators.maxLength(5000)],
     gastoPrevisto: [null as number | null, Validators.min(0)],
     receitaPrevista: [null as number | null, Validators.min(0)],
+    gratuito: [true],
+    valorIngresso: [null as number | null, Validators.min(0)],
   });
 
   private readonly valores = toSignal(this.form.valueChanges, { initialValue: this.form.value });
@@ -64,13 +68,18 @@ export class EventoForm implements OnInit {
   }
 
   protected salvar(): void {
-    if (this.form.invalid) {
+    const v = this.form.getRawValue();
+    const gratuito = v.gratuito !== false;
+    if (this.form.invalid || (!gratuito && !(Number(v.valorIngresso) > 0))) {
       this.form.markAllAsTouched();
-      this.erro.set('Preencha os campos obrigatórios destacados.');
+      this.erro.set(
+        gratuito
+          ? 'Preencha os campos obrigatórios destacados.'
+          : 'Informe o valor do ingresso ou marque o evento como gratuito.',
+      );
       return;
     }
 
-    const v = this.form.getRawValue();
     const dados = {
       titulo: v.titulo!,
       tipo: v.tipo!,
@@ -83,6 +92,8 @@ export class EventoForm implements OnInit {
       descricao: v.descricao || null,
       gastoPrevisto: Number(v.gastoPrevisto) || 0,
       receitaPrevista: Number(v.receitaPrevista) || 0,
+      gratuito,
+      valorIngresso: gratuito ? 0 : Number(v.valorIngresso),
     };
 
     this.salvando.set(true);
@@ -117,6 +128,8 @@ export class EventoForm implements OnInit {
       descricao: e.descricao ?? '',
       gastoPrevisto: e.gastoPrevisto,
       receitaPrevista: e.receitaPrevista,
+      gratuito: e.gratuito,
+      valorIngresso: e.gratuito ? null : e.valorIngresso,
     });
   }
 }

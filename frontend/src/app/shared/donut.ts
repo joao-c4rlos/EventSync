@@ -12,7 +12,7 @@ const RAIO = 15.9155; // circunferência = 100, então o dasharray trabalha dire
   selector: 'app-donut',
   template: `
     <svg viewBox="0 0 42 42" role="img" [attr.aria-label]="descricao()">
-      <circle cx="21" cy="21" [attr.r]="raio" fill="none" stroke="#eef0f4" stroke-width="8" />
+      <circle cx="21" cy="21" [attr.r]="raio" fill="none" stroke="var(--chart-grid)" stroke-width="8" />
       @for (f of arcos(); track f.rotulo) {
         <circle cx="21" cy="21" [attr.r]="raio" fill="none" [attr.stroke]="f.cor" stroke-width="8"
           [attr.stroke-dasharray]="f.porcentagem + ' ' + (100 - f.porcentagem)" [attr.stroke-dashoffset]="f.deslocamento" />

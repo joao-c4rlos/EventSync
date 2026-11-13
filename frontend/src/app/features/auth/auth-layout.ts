@@ -7,14 +7,18 @@ import { RouterOutlet } from '@angular/router';
   template: `
     <div class="pagina">
       <section class="vitrine" aria-hidden="true">
-        <div class="logo">
-          <span class="selo"><span class="icone">sync</span></span>
-          EVENTSYNC
+        <span class="overline">Gestão de eventos</span>
+        <div class="mensagem">
+          <p>Tudo em sincronia, resultado crescendo.</p>
+          <small>Organize inscrições, financeiro e indicadores dos seus eventos em um só lugar.</small>
         </div>
-        <p>Organize, planeje e transforme experiências em momentos inesquecíveis.</p>
+        <div class="barras"><i></i><i></i><i></i></div>
       </section>
       <section class="formulario">
-        <router-outlet />
+        <div class="coluna">
+          <img class="logo" src="/eventsync-logo.jpg" width="1024" height="559" alt="EventSync — sistema para gestão de eventos" />
+          <router-outlet />
+        </div>
       </section>
     </div>
   `,

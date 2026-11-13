@@ -1,44 +1,47 @@
 .pagina {
   min-height: 100vh;
-  padding: 1.5rem;
-  background: linear-gradient(135deg, var(--cor-sidebar) 0%, var(--cor-roxo) 55%, #8e63d6 100%);
+  background: var(--surface);
 }
 
+/* Wordmark tipográfico sobre a cor de estrutura (navy) */
 .marca {
-  max-width: 1040px;
-  margin: 0 auto 1.5rem;
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #fff;
+  display: flex;
+  align-items: center;
+  min-height: var(--topbar-height);
+  padding: 0 var(--space-8);
+  background: var(--nav-bg);
+  font: 700 22px/28px var(--font-display);
+  color: var(--nav-ink-active);
 
   span {
-    color: var(--cor-ciano);
+    color: var(--nav-accent);
   }
 }
 
 .conteudo {
   max-width: 1040px;
-  margin: 0 auto;
+  margin: var(--space-8) auto;
+  padding: 0 var(--space-4);
   display: grid;
   grid-template-columns: minmax(0, 1fr) 380px;
-  gap: 1.5rem;
+  gap: var(--space-6);
   align-items: start;
 }
 
 .card {
-  padding: 2rem;
+  padding: var(--space-8);
 }
 
 .tipo {
   display: inline-flex;
   align-items: center;
-  gap: 0.3rem;
-  color: var(--cor-roxo);
-  font-weight: 500;
-  font-size: 0.9rem;
+  gap: 6px;
+  font: 600 13px/18px var(--font-text);
+  color: var(--ink-muted);
 
   .icone {
-    font-size: 18px;
+    font-size: 16px;
+    color: var(--primary);
   }
 }
 
@@ -47,7 +50,7 @@ h1 {
 }
 
 .organizador {
-  color: var(--cor-texto-suave);
+  color: var(--ink-muted);
   margin: 0 0 1.5rem;
 }
 
@@ -66,39 +69,51 @@ ul {
   }
 
   .icone {
-    color: var(--cor-roxo);
+    color: var(--primary);
+    font-size: 18px;
   }
 }
 
 .descricao {
   line-height: 1.6;
   white-space: pre-line;
-  border-top: 1px solid var(--cor-fundo);
+  border-top: 1px solid var(--border);
   padding-top: 1.25rem;
   margin: 0;
 }
 
 h2 {
-  margin: 0 0 0.25rem;
-  font-size: 1.3rem;
+  margin: 0 0 var(--space-1);
 }
 
 .vagas {
-  color: var(--cor-verde-escuro);
-  font-weight: 500;
-  margin: 0 0 1.25rem;
+  color: var(--accent-text);
+  font-weight: 600;
+  margin: 0 0 var(--space-5);
 }
 
-.btn-roxo {
-  width: 100%;
-  padding: 0.85rem;
+form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+
+  .es-btn {
+    width: 100%;
+  }
+}
+
+.selos {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2);
 }
 
 .centro {
   text-align: center;
 
   p {
-    color: var(--cor-texto-suave);
+    color: var(--ink-muted);
     line-height: 1.5;
   }
 }
@@ -110,15 +125,15 @@ h2 {
 
 .grande {
   font-size: 56px;
-  color: var(--cor-texto-suave);
+  color: var(--ink-muted);
 
   &.ok {
-    color: var(--cor-sucesso);
+    color: var(--success);
   }
 }
 
 .carregando {
-  color: #fff;
+  padding: var(--space-16) 0;
 }
 
 @media (max-width: 860px) {
@@ -127,6 +142,6 @@ h2 {
   }
 
   .card {
-    padding: 1.5rem;
+    padding: var(--space-6);
   }
 }

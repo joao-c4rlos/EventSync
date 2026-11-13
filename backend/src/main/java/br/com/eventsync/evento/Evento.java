@@ -67,6 +67,12 @@ public class Evento {
     @Column(name = "receita_prevista", nullable = false, precision = 12, scale = 2)
     private BigDecimal receitaPrevista = BigDecimal.ZERO;
 
+    @Column(nullable = false)
+    private boolean gratuito = true;
+
+    @Column(name = "valor_ingresso", nullable = false, precision = 12, scale = 2)
+    private BigDecimal valorIngresso = BigDecimal.ZERO;
+
     @Column(name = "criado_em", nullable = false, updatable = false)
     private Instant criadoEm;
 

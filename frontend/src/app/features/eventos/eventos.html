@@ -1,51 +1,69 @@
 @if (carregando() && eventos().length === 0) {
-  <p class="carregando">Carregando eventos...</p>
+  <p class="carregando">Carregando eventos…</p>
 } @else if (semNenhumEvento()) {
-  <section class="vazio">
-    <h1>Gerencie eventos de forma inteligente.</h1>
-    <p>Transforme sua visão em experiências memoráveis com a plataforma de gestão de eventos mais completa.</p>
-    <a routerLink="/eventos/novo" class="btn btn-primario">Criar meu primeiro evento</a>
+  <section class="es-card vazio">
+    <span class="es-stat__icon selo"><app-icone nome="calendar" /></span>
+    <h1>Gerencie seus eventos em um só lugar</h1>
+    <p>Crie o primeiro evento, publique a página de inscrição e acompanhe inscritos e financeiro em tempo real.</p>
+    <a routerLink="/eventos/novo" class="es-btn es-btn--primary"><app-icone nome="plus" />Criar primeiro evento</a>
   </section>
 } @else {
-  <div class="cabecalho-pagina">
-    <h1>Eventos</h1>
-    <a routerLink="/eventos/novo" class="btn btn-primario"><span class="icone">add</span> Novo evento</a>
-  </div>
+  <div class="pagina">
+    <div class="pagina-topo">
+      <h1>Eventos</h1>
+      <a routerLink="/eventos/novo" class="es-btn es-btn--primary"><app-icone nome="plus" />Novo evento</a>
+    </div>
 
-  <div class="filtros">
-    <select class="input" [value]="status()" (change)="filtrarStatus($any($event.target).value)" aria-label="Filtrar por status">
-      <option value="">Todos os status</option>
-      @for (s of statusOpcoes; track s[0]) {
-        <option [value]="s[0]">{{ s[1] }}</option>
+    <div class="filtros">
+      <label class="es-field filtro-status">
+        <span class="es-field__label">Status</span>
+        <span class="es-select-wrap">
+          <select class="es-select" (change)="filtrarStatus($any($event.target).value)">
+            <option value="" [selected]="!status()">Todos os status</option>
+            @for (s of statusOpcoes; track s[0]) {
+              <option [value]="s[0]" [selected]="s[0] === status()">{{ s[1] }}</option>
+            }
+          </select>
+        </span>
+      </label>
+      @if (busca()) {
+        <span class="chip">
+          Busca: “{{ busca() }}”
+          <button type="button" (click)="limparBusca()" aria-label="Limpar busca"><app-icone nome="x" /></button>
+        </span>
       }
-    </select>
-    @if (busca()) {
-      <span class="chip">
-        Busca: "{{ busca() }}"
-        <button type="button" (click)="limparBusca()" aria-label="Limpar busca"><span class="icone">close</span></button>
-      </span>
-    }
-  </div>
+    </div>
 
-  @if (eventos().length === 0) {
-    <p class="carregando">Nenhum evento encontrado com esses filtros.</p>
-  }
-
-  <div class="grade">
-    @for (e of eventos(); track e.id) {
-      <a class="card evento" [routerLink]="['/eventos', e.id]">
-        <div class="topo">
-          <span class="tipo"><span class="icone">{{ tipo(e.tipo).icone }}</span> {{ tipo(e.tipo).rotulo }}</span>
-          <span class="badge" [class]="e.status.toLowerCase()">{{ rotuloStatus[e.status] }}</span>
-        </div>
-        <h2>{{ e.titulo }}</h2>
-        <p><span class="icone">calendar_today</span> {{ e.dataInicio | date: 'dd/MM/yyyy' }} · {{ hora(e.horaInicio) }}{{ e.horaFim ? ' - ' + hora(e.horaFim) : '' }}</p>
-        <p><span class="icone">location_on</span> {{ e.local }}</p>
-        <div class="ocupacao">
-          <span>{{ e.inscritos }} / {{ e.capacidade }} inscritos</span>
-          <div class="barra"><div [style.width.%]="(e.inscritos / e.capacidade) * 100"></div></div>
-        </div>
-      </a>
+    @if (eventos().length === 0) {
+      <section class="es-card sem-resultado">
+        <span class="es-stat__icon"><app-icone nome="search" /></span>
+        <h2>Nenhum evento encontrado</h2>
+        <p>Ajuste a busca ou o filtro de status para ver outros eventos.</p>
+      </section>
     }
+
+    <div class="grade">
+      @for (e of eventos(); track e.id) {
+        <a class="es-card es-card--interactive evento" [routerLink]="['/eventos', e.id]">
+          <div class="topo">
+            <span class="tipo"><app-icone [nome]="tipo(e.tipo).icone" />{{ tipo(e.tipo).rotulo }}</span>
+            <app-status [tom]="badge[e.status].tom" [rotulo]="badge[e.status].rotulo" [icone]="badge[e.status].icone" />
+          </div>
+          <h2 class="es-card__title">{{ e.titulo }}</h2>
+          <p class="meta"><app-icone nome="calendar" />{{ e.dataInicio | date: 'dd/MM/yyyy' }} · {{ hora(e.horaInicio) }}{{ e.horaFim ? ' – ' + hora(e.horaFim) : '' }}</p>
+          <p class="meta"><app-icone nome="map-pin" />{{ e.local }}</p>
+          <div class="ocupacao">
+            <div class="ocupacao-texto">
+              <span><b class="es-num">{{ e.inscritos }}</b> / <span class="es-num">{{ e.capacidade }}</span> inscritos</span>
+              <span class="es-num">{{ percentual(e) }}%</span>
+            </div>
+            <div class="barra" role="progressbar" [attr.aria-valuenow]="percentual(e)" aria-valuemin="0" aria-valuemax="100"
+              [attr.aria-label]="'Ocupação de ' + e.titulo">
+              <div [style.width.%]="percentual(e)"></div>
+            </div>
+          </div>
+        </a>
+      }
+    </div>
   </div>
 }

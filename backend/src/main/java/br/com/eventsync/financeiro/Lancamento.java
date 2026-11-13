@@ -1,6 +1,7 @@
 package br.com.eventsync.financeiro;
 
 import br.com.eventsync.evento.Evento;
+import br.com.eventsync.inscricao.Inscricao;
 import br.com.eventsync.usuario.Usuario;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -29,6 +30,11 @@ public class Lancamento {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "evento_id")
     private Evento evento;
+
+    /** Preenchido quando o lançamento nasce de uma inscrição paga. A exclusão da inscrição apaga o lançamento. */
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "inscricao_id", unique = true)
+    private Inscricao inscricao;
 
     @Column(nullable = false, length = 150)
     private String descricao;

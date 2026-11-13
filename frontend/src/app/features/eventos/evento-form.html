@@ -1,84 +1,122 @@
-<h1>{{ editando() ? 'Editar evento' : 'Novo evento' }}</h1>
+<div class="pagina">
+  <div class="pagina-topo">
+    <h1>{{ editando() ? 'Editar evento' : 'Novo evento' }}</h1>
+  </div>
 
-@if (carregando()) {
-  <p class="carregando">Carregando evento...</p>
-} @else {
-  <form [formGroup]="form" (ngSubmit)="salvar()" novalidate>
-    @if (erro()) {
-      <div class="alerta erro" role="alert">{{ erro() }}</div>
-    }
+  @if (carregando()) {
+    <p class="carregando">Carregando evento…</p>
+  } @else {
+    <form [formGroup]="form" (ngSubmit)="salvar()" novalidate class="pagina">
+      @if (erro()) {
+        <app-alerta tom="danger" titulo="Não foi possível salvar o evento">{{ erro() }}</app-alerta>
+      }
 
-    <div class="layout">
-      <div class="campos">
-        <div class="campo">
-          <label for="titulo">Título do evento (do que se trata o evento?)</label>
-          <input id="titulo" class="input" formControlName="titulo" [class.invalido]="invalido('titulo')" />
-        </div>
+      <div class="layout">
+        <section class="es-card campos">
+          <div class="es-card__head"><h2 class="es-card__title">Informações do evento</h2></div>
 
-        <fieldset class="linha tipo" [class.invalido]="invalido('tipo')">
-          <legend>Tipo do evento</legend>
-          <div class="lista-tipos" role="radiogroup">
-            @for (t of tipos; track t.valor) {
-              <label class="opcao-tipo" [class.selecionado]="form.controls.tipo.value === t.valor">
-                <input type="radio" formControlName="tipo" [value]="t.valor" class="sr-only" />
-                <span class="icone">{{ t.icone }}</span> {{ t.rotulo }}
-              </label>
-            }
+          <label class="es-field" [class.es-field--error]="invalido('titulo')">
+            <span class="es-field__label">Título do evento</span>
+            <input id="titulo" class="es-field__control" formControlName="titulo" placeholder="Ex.: Congresso de Tecnologia 2026" />
+            @if (invalido('titulo')) { <span class="es-field__hint">Informe o título do evento.</span> }
+          </label>
+
+          <fieldset class="tipo" [class.es-field--error]="invalido('tipo')">
+            <legend class="es-field__label">Tipo do evento</legend>
+            <div class="lista-tipos" role="radiogroup">
+              @for (t of tipos; track t.valor) {
+                <label class="es-btn opcao-tipo" [class.es-btn--secondary]="form.controls.tipo.value === t.valor"
+                  [class.es-btn--outline]="form.controls.tipo.value !== t.valor" [class.selecionado]="form.controls.tipo.value === t.valor">
+                  <input type="radio" formControlName="tipo" [value]="t.valor" class="sr-only" />
+                  <app-icone [nome]="t.icone" />{{ t.rotulo }}
+                </label>
+              }
+            </div>
+            @if (invalido('tipo')) { <span class="es-field__hint">Escolha o tipo do evento.</span> }
+          </fieldset>
+
+          <div class="duas">
+            <label class="es-field" [class.es-field--error]="invalido('dataInicio')">
+              <span class="es-field__label">Data do evento</span>
+              <input id="dataInicio" type="date" class="es-field__control" formControlName="dataInicio" />
+              @if (invalido('dataInicio')) { <span class="es-field__hint">Informe a data de início.</span> }
+            </label>
+            <label class="es-field">
+              <span class="es-field__label">Data de término (opcional)</span>
+              <input id="dataFim" type="date" class="es-field__control" formControlName="dataFim" [min]="form.controls.dataInicio.value" />
+            </label>
+            <label class="es-field" [class.es-field--error]="invalido('horaInicio')">
+              <span class="es-field__label">Horário de início</span>
+              <input id="horaInicio" type="time" class="es-field__control" formControlName="horaInicio" />
+              @if (invalido('horaInicio')) { <span class="es-field__hint">Informe o horário de início.</span> }
+            </label>
+            <label class="es-field">
+              <span class="es-field__label">Horário de término (opcional)</span>
+              <input id="horaFim" type="time" class="es-field__control" formControlName="horaFim" />
+            </label>
           </div>
-        </fieldset>
 
-        <div class="linha dupla">
-          <label for="dataInicio">Data evento</label>
-          <input id="dataInicio" type="date" class="input" formControlName="dataInicio" [class.invalido]="invalido('dataInicio')" />
-          <label for="dataFim">Data término (opcional)</label>
-          <input id="dataFim" type="date" class="input" formControlName="dataFim" [min]="form.controls.dataInicio.value" />
-        </div>
+          <label class="es-field" [class.es-field--error]="invalido('local')">
+            <span class="es-field__label">Local</span>
+            <input id="local" class="es-field__control" formControlName="local" placeholder="Ex.: Arena Turbo, São Paulo" />
+            @if (invalido('local')) { <span class="es-field__hint">Informe onde o evento acontece.</span> }
+          </label>
 
-        <div class="linha dupla">
-          <label for="horaInicio">Horário de início</label>
-          <input id="horaInicio" type="time" class="input" formControlName="horaInicio" [class.invalido]="invalido('horaInicio')" />
-          <label for="horaFim">Horário de término (opcional)</label>
-          <input id="horaFim" type="time" class="input" formControlName="horaFim" />
-        </div>
+          <label class="es-field capacidade" [class.es-field--error]="invalido('capacidade')">
+            <span class="es-field__label">Capacidade</span>
+            <input id="capacidade" type="number" min="1" class="es-field__control es-num" formControlName="capacidade" placeholder="Ex.: 500" />
+            <span class="es-field__hint">{{ invalido('capacidade') ? 'Informe pelo menos 1 vaga.' : 'Número máximo de inscrições aceitas.' }}</span>
+          </label>
 
-        <div class="linha">
-          <label for="local">Local</label>
-          <input id="local" class="input" formControlName="local" placeholder="Ex.: Arena Turbo, São Paulo" [class.invalido]="invalido('local')" />
-        </div>
+          <label class="es-field">
+            <span class="es-field__label">Descrição do evento</span>
+            <textarea id="descricao" class="es-field__control" rows="6" formControlName="descricao"
+              placeholder="Conte o que o participante vai encontrar"></textarea>
+          </label>
+        </section>
 
-        <div class="linha">
-          <label for="capacidade">Quantidade estimada de pessoas</label>
-          <input id="capacidade" type="number" min="1" class="input curto" formControlName="capacidade" [class.invalido]="invalido('capacidade')" />
-        </div>
-
-        <div class="campo">
-          <label for="descricao">Descrição do evento</label>
-          <textarea id="descricao" class="input" rows="6" formControlName="descricao"></textarea>
-        </div>
+        <aside class="es-card resumo">
+          <div class="es-card__head"><h2 class="es-card__title">Resumo financeiro</h2></div>
+          <label class="es-field ingresso">
+            <span class="es-field__label">Ingresso</span>
+            <span class="opcao">
+              <input type="checkbox" formControlName="gratuito" />
+              Evento gratuito
+            </span>
+          </label>
+          @if (!form.controls.gratuito.value) {
+            <label class="es-field">
+              <span class="es-field__label">Valor do ingresso (R$)</span>
+              <input id="ingresso" type="number" min="0.01" step="0.01" class="es-field__control es-num" formControlName="valorIngresso" placeholder="0,00" />
+              <span class="es-field__hint">Cada inscrição lança este valor como recebimento no financeiro.</span>
+            </label>
+          }
+          <label class="es-field">
+            <span class="es-field__label">Gasto previsto (R$)</span>
+            <input id="gasto" type="number" min="0" step="0.01" class="es-field__control es-num" formControlName="gastoPrevisto" placeholder="0,00" />
+          </label>
+          <label class="es-field">
+            <span class="es-field__label">Receita prevista (R$)</span>
+            <input id="receita" type="number" min="0" step="0.01" class="es-field__control es-num" formControlName="receitaPrevista" placeholder="0,00" />
+          </label>
+          <div class="lucro es-stat">
+            <span class="es-stat__label">Lucro previsto</span>
+            <span class="es-stat__value" [class.negativo]="lucroPrevisto() < 0">{{ lucroPrevisto() | currency: 'BRL' }}</span>
+            <span class="es-stat__delta"
+              [class.es-stat__delta--up]="lucroPrevisto() > 0" [class.es-stat__delta--down]="lucroPrevisto() < 0">
+              @if (lucroPrevisto() !== 0) { <app-icone [nome]="lucroPrevisto() > 0 ? 'arrow-up' : 'arrow-down'" /> }
+              <span>receita − gasto</span>
+            </span>
+          </div>
+        </aside>
       </div>
 
-      <aside class="card resumo">
-        <h2>Resumo financeiro</h2>
-        <div class="linha-resumo">
-          <label for="gasto">Valor gasto (previsto)</label>
-          <input id="gasto" type="number" min="0" step="0.01" class="input" formControlName="gastoPrevisto" placeholder="R$ 0,00" />
-        </div>
-        <div class="linha-resumo">
-          <label for="receita">Receita prevista</label>
-          <input id="receita" type="number" min="0" step="0.01" class="input" formControlName="receitaPrevista" placeholder="R$ 0,00" />
-        </div>
-        <div class="linha-resumo">
-          <span class="rotulo">Lucro previsto</span>
-          <strong [class.negativo]="lucroPrevisto() < 0">{{ lucroPrevisto() | currency: 'BRL' }}</strong>
-        </div>
-      </aside>
-    </div>
-
-    <div class="acoes">
-      <button type="submit" class="btn btn-primario" [disabled]="salvando()">
-        {{ salvando() ? 'Salvando...' : editando() ? 'Salvar alterações' : 'Salvar novo evento' }}
-      </button>
-      <button type="button" class="btn btn-secundario" (click)="cancelar()">Cancelar</button>
-    </div>
-  </form>
-}
+      <div class="acoes">
+        <button type="button" class="es-btn es-btn--outline" (click)="cancelar()">Cancelar</button>
+        <button type="submit" class="es-btn es-btn--primary" [disabled]="salvando()">
+          {{ salvando() ? 'Salvando…' : editando() ? 'Salvar alterações' : 'Criar evento' }}
+        </button>
+      </div>
+    </form>
+  }
+</div>

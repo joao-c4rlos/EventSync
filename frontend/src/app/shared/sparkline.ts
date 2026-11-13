@@ -4,7 +4,7 @@ import { Component, computed, input } from '@angular/core';
   selector: 'app-sparkline',
   template: `
     <svg [attr.viewBox]="'0 0 ' + largura + ' ' + altura" preserveAspectRatio="none" role="img" [attr.aria-label]="rotulo()">
-      <polyline [attr.points]="pontos()" fill="none" [attr.stroke]="cor()" stroke-width="3"
+      <polyline [attr.points]="pontos()" fill="none" [attr.stroke]="cor()" stroke-width="2.5"
         stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke" />
     </svg>
   `,
@@ -15,7 +15,7 @@ import { Component, computed, input } from '@angular/core';
 })
 export class Sparkline {
   readonly valores = input<number[]>([]);
-  readonly cor = input('#2aa99a');
+  readonly cor = input('var(--chart-2)');
   readonly rotulo = input('');
 
   protected readonly largura = 200;
